@@ -1,6 +1,8 @@
 #include <Adc.h>
 #include <stm32f4xx.h>
 
+using namespace Platform;
+
 Adc::Adc() {
 	//Enable ADC
 	ADC1->CR2 |= ADC_CR2_ADON;

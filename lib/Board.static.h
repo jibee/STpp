@@ -5,7 +5,7 @@
 #include "IncrementalEncoder.h"
 #include "Uart.h"
 #include "Ax12.h"
-
+using namespace Platform;
 // Motor control
 Gpio Prop0_PWM(GpioB[10]);
 Gpio Prop0A(GpioB[13]);

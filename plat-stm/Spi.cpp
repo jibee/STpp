@@ -1,4 +1,8 @@
 #include "Spi.h"
+#include "Dma.h"
+#include "Gpio.h"
+
+using namespace Platform;
 
 void Spi::init() {
 	if(n == 1) RCC->APB2ENR |= 1 << 12;

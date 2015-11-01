@@ -4,9 +4,9 @@
 
 class LedStrip {
 	private:
-		Spi& spi;
+		Platform::Spi& spi;
 	public:
-		LedStrip(Spi& spi);
+		LedStrip(Platform::Spi& spi);
 		LedStrip& init(uint8_t *buf, int nleds, int len);
 		LedStrip& prepare(uint8_t *buf, int id, int r, int g, int b);
 		LedStrip& push(uint8_t *buf, int nleds);

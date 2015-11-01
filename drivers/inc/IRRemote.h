@@ -7,15 +7,15 @@
 
 class IRRemote {
 	private:
-		Timer& t;
-		Gpio& g;
+		Platform::Timer& t;
+		Platform::Gpio& g;
 
-		BinarySemaphore dataAvailable;
-		BinarySemaphore dataReleased;
+		Platform::BinarySemaphore dataAvailable;
+		Platform::BinarySemaphore dataReleased;
 		uint32_t word;
 		uint32_t tmpWord;
 	public:
-		IRRemote(Timer& t, Gpio& g);
+		IRRemote(Platform::Timer& t, Platform::Gpio& g);
 		int nextRaw();
 		int next();
 };

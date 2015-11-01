@@ -12,7 +12,7 @@ class RPC {
 		//IDs goes from 0x00 to 0x20
 		Callback cbs[0x20];
 
-		BinarySemaphore signalIncoming, running;
+		Platform::BinarySemaphore signalIncoming, running;
 		volatile bool ingoing;
 	public:
 		IStream* in;

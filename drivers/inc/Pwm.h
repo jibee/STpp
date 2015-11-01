@@ -5,11 +5,11 @@
 
 class Pwm {
 	private:
-		Gpio& gpio;
-		Timer& tim;
+		Platform::Gpio& gpio;
+		Platform::Timer& tim;
 		int chan;
 	public:
-		Pwm(Gpio& p, Timer& t, int n, int pre=42, int atr=1024);
+		Pwm(Platform::Gpio& p, Platform::Timer& t, int n, int pre=42, int atr=1024);
 		Pwm& setDutyCycle(float v);
 		Pwm& setDutyCycle(int percent);
 		Pwm& setComparator(unsigned int cmp);

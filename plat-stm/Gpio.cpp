@@ -1,6 +1,8 @@
 #include <stm32f4xx.h>
 #include "Gpio.h"
 
+using namespace Platform;
+
 #define me ((volatile GPIO_TypeDef*)(this->port->base))
 
 Gpio::Gpio(GpioPort *p, int n)

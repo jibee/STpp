@@ -2,6 +2,8 @@
 #include <Log.h>
 #include "Asserv.h"
 
+using namespace Platform;
+
 Asserv::Asserv(IncrementalEncoder& _left, IncrementalEncoder& _right,
 	Timer& tim, HBridgeST &mot1, HBridgeST &mot2) :
 	tim(tim),

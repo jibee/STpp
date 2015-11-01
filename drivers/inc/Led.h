@@ -6,11 +6,11 @@
 
 class Led {
 	private:
-		Mutex _m;
-		Gpio _p;
+		Platform::Mutex _m;
+		Platform::Gpio _p;
 		bool _rev;
 	public:
-		Led(Gpio p, bool rev=false);
+		Led(Platform::Gpio p, bool rev=false);
 		Led& on();
 		Led& off();
 		Led& toggle();

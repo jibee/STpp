@@ -2,8 +2,11 @@
 #define _EXTI_H
 #include "Gpio.h"
 #include <tr1/functional>
-
+namespace Platform
+{
+/** Callback for external interrupts */
 void exti_handler();
+
 class Exti {
 	public:
 		enum Port {
@@ -41,6 +44,6 @@ class Exti {
 		Exti& setTopCB(Callback cb);
 		Exti& setBottomCB(Callback cb);
 };
-
+}
 
 #endif /* _EXTI_H */

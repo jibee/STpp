@@ -5,6 +5,8 @@ extern "C" {
 #include <task.h>
 };
 
+using namespace Platform;
+
 Time::Time(Timer& t) :
 	timer(t) {
 

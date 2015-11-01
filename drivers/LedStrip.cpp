@@ -1,6 +1,7 @@
 #include "LedStrip.h"
 #include <Log.h>
 
+using namespace Platform;
 LedStrip::LedStrip(Spi& spi):
 	spi(spi) {
 	spi

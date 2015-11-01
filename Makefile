@@ -78,7 +78,10 @@ $(BAD_FILES): CFLAGS+=-Wno-sign-compare -Wno-strict-aliasing -Wno-unused-paramet
 
 OBJS=$(PLAT_OBJS) $(FREERTOS_OBJS) $(USB_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS) $(LIB_OBJS)
 
-all: $(EXECS)
+all: $(EXECS) 
+
+doc:
+	doxygen
 
 lib/static.o: lib/static.cpp lib/Board.static.h
 

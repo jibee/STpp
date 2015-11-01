@@ -2,6 +2,8 @@
 #include <Uart.h>
 #include <Lidar.h>
 
+using namespace Platform;
+
 LidarNeato::LidarNeato(Gpio& rx, Uart& u): uart(u) {
 	u
 		.configGpio(rx)

@@ -2,12 +2,12 @@
 #define _AX12_H
 
 #include <Uart.h>
-
+namespace P=Platform;
 class Ax12 {
 	private:
-		Uart uart;
+		P::Uart uart;
 		int id;
-		Gpio *g;
+		P::Gpio *g;
 		void prelude();
 		void writeReg(char reg, char val);
 		void writeReg(char reg, unsigned short val);
@@ -20,9 +20,9 @@ class Ax12 {
 		void flush();
 	public:
 		//One wire
-		Ax12(Gpio g, Uart u, int i);
+		Ax12(P::Gpio g, P::Uart u, int i);
 		//Three wires
-		Ax12(Uart u, int i, Gpio *sw, Gpio& rx, Gpio& tx);
+		Ax12(P::Uart u, int i, P::Gpio *sw, P::Gpio& rx, P::Gpio& tx);
 		Ax12& setLed(bool);
 		Ax12& ping();
 

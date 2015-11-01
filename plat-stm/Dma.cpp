@@ -24,6 +24,8 @@ extern "C" {
 	void DMA2_Stream7_IRQHandler();
 };
 
+using namespace Platform;
+
 xSemaphoreHandle dmaSem[8][2];
 
 DmaStream::DmaStream(int dmaId, int streamId, int channel): streamId(streamId), dmaId(dmaId) {

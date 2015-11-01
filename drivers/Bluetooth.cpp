@@ -1,5 +1,7 @@
 #include "Bluetooth.h"
 
+using namespace Platform;
+
 Bluetooth::Bluetooth(int nb, Gpio& tx, Gpio& rx): Uart(nb) {
 	//setBaudrate(9600);
 	enable();

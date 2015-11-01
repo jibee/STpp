@@ -2,6 +2,8 @@
 #include <Gpio.h>
 #include <Log.h>
 
+using namespace Platform;
+
 Timer::Timer(volatile TIM_TypeDef* b, int n) :
 	base(b), number(n) {
 	//TIM1: APB2 0

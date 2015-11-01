@@ -1,5 +1,7 @@
 #include <IncrementalEncoder.h>
 
+using namespace Platform;
+
 /**
  * @brief Creates an IncrementalEncoder object
  *

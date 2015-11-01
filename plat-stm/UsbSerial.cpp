@@ -95,6 +95,7 @@ extern USB_OTG_CORE_HANDLE USB_OTG_dev;
 extern USBD_DEVICE USR_desc;
 extern USBD_Usr_cb_TypeDef USR_cb;
 
+using namespace Platform;
 UsbSerial::UsbSerial() {
 	USBD_Init(&USB_OTG_dev,
 			USB_OTG_FS_CORE_ID,

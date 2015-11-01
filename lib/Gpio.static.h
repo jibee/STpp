@@ -1,6 +1,8 @@
 #include <stm32f4xx.h>
 #include "Gpio.h"
 
+namespace Platform
+{
 //DM00031020.pdf p53
 GpioPort GpioA(GPIOA);
 GpioPort GpioB(GPIOB);
@@ -11,3 +13,4 @@ GpioPort GpioF(GPIOF);
 GpioPort GpioG(GPIOG);
 GpioPort GpioH(GPIOH);
 GpioPort GpioI(GPIOI);
+}

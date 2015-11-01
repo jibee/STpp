@@ -6,11 +6,11 @@
 
 class HBridgeST {
 	private:
-		Gpio propa;
-		Gpio propb;
+		Platform::Gpio propa;
+		Platform::Gpio propb;
 		Pwm pwm;
 	public:
-		HBridgeST(Gpio& a, Gpio& b, Gpio& pwm, Timer& tim, int chan);
+		HBridgeST(Platform::Gpio& a, Platform::Gpio& b, Platform::Gpio& pwm, Platform::Timer& tim, int chan);
 		void setSpeed(int);
 };
 

@@ -4,10 +4,12 @@
 #include "Irq.h"
 #include "Log.h"
 
+using namespace Platform;
+
 Exti::Callback Exti::top_cb[15];
 Exti::Callback Exti::bottom_cb[15];
 
-void exti_handler() {
+void Platform::exti_handler() {
 	int i = 0;
 	unsigned long reg=EXTI->PR;
 	while(reg) {

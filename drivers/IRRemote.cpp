@@ -3,6 +3,8 @@
 #include <Log.h>
 #include <Log.h>
 
+using namespace Platform;
+
 static const int remoteCodes[][2] = {
 	//Digits
 	{ 0x00ff6897, 0},

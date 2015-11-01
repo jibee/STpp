@@ -76,7 +76,7 @@ class Position {
 
 class Asserv {
 	private:
-		Timer& tim;
+		Platform::Timer& tim;
 		IncrementalEncoder& eLeft;
 		IncrementalEncoder& eRight;
 		HBridgeST& motorl;
@@ -106,7 +106,7 @@ class Asserv {
 		int dateStart;
 
 	public:
-		Asserv(IncrementalEncoder& left, IncrementalEncoder& right, Timer& tim, HBridgeST& mot1, HBridgeST& mot2);
+		Asserv(IncrementalEncoder& left, IncrementalEncoder& right, Platform::Timer& tim, HBridgeST& mot1, HBridgeST& mot2);
 		Asserv& setTargetDist(int t);
 		Asserv& setTargetAngle(int a);
 

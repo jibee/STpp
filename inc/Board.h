@@ -7,6 +7,8 @@
 #include <Uart.h>
 #include <Ax12.h>
 
+using namespace Platform;
+
 // Motor control
 extern Gpio Prop0_PWM;
 extern Gpio Prop0A;

@@ -2,7 +2,8 @@
 #define _DMA_H
 
 #include <stm32f4xx.h>
-
+namespace Platform
+{
 class DmaStream {
 	private:
 		DMA_TypeDef* dma;
@@ -32,5 +33,5 @@ class DmaStream {
 		DmaStream& setMemory(volatile void*);
 		DmaStream& fifo(bool);
 };
-
+}
 #endif /* _DMA_H */

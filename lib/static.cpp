@@ -1,4 +1,5 @@
 //This file is used to control the order of object constructions
+
 #include "Log.static.h"
 #include "Gpio.static.h"
 #include "Timer.static.h"

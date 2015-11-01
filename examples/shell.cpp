@@ -17,6 +17,7 @@
 #include <Lidar.h>
 #include <Lidar.h>
 #include <Tasks.h>
+#include <Gpio.h>
 
 static Shell shell;
 

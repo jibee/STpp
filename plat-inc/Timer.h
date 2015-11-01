@@ -4,6 +4,8 @@
 #include <Gpio.h>
 #include <stm32f4xx.h>
 
+namespace Platform
+{
 class Timer {
 	private:
 		volatile TIM_TypeDef* base;
@@ -87,4 +89,5 @@ extern Timer Tim11;
 extern Timer Tim12;
 extern Timer Tim13;
 extern Timer Tim14;
+}
 #endif /* _TIMER_H */

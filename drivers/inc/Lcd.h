@@ -28,11 +28,11 @@ class Lcd {
 		void write4(int r, int val);
 		void init();
 		void wait(bool quick);
-		Gpio RS, E, DB7, DB6, DB5, DB4;
+		Platform::Gpio RS, E, DB7, DB6, DB5, DB4;
 		bool is_4bit;
-		Mutex lock;
+		Platform::Mutex lock;
 	public:
-		Lcd(Gpio RS, Gpio E, Gpio DB7, Gpio DB6, Gpio DB5, Gpio DB4);
+		Lcd(Platform::Gpio RS, Platform::Gpio E, Platform::Gpio DB7, Platform::Gpio DB6, Platform::Gpio DB5, Platform::Gpio DB4);
 		// 0 0 0 0 0 0 0 1
 		Lcd& clearDisplay();
 		// 0 0 0 0 0 0 1 *

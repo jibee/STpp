@@ -5,6 +5,10 @@
 #include <Irq.h>
 #include <stm32f4xx.h>
 
+
+/** "pre-declare" the interrupt handlers as C-levels so they can be insered
+into the interrupt vectors */
+
 extern "C" {
 	void USART1_IRQHandler(void);
 	void USART2_IRQHandler(void);
@@ -14,9 +18,14 @@ extern "C" {
 	void USART6_IRQHandler(void);
 };
 
+using namespace Platform;
+
+/// Reception queue.
 static xQueueHandle uart_queue_rx[7];
 //static xQueueHandle uart_queue_tx[7];
 
+/** General handler for receive interrupts.
+*/
 static void irq_handler(volatile USART_TypeDef* b, int i) {
 	if(b->SR & USART_SR_RXNE) {
 		char val = b->DR;
@@ -95,12 +104,12 @@ Uart::Uart(int n, DmaStream* dma) :
 }
 
 Uart& Uart::configGpio(Gpio& p) {
-	int af;
+	Gpio::AF af;
 
 	if(number < 4)
-		af = 7;
+		af = Gpio::USART1_3;
 	else
-		af = 8;
+		af = Gpio::USART4_6;
 
 	p.setAlternate(af);
 	p.setSpeed(Gpio::SPEED_100MHz);

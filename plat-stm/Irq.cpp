@@ -1,6 +1,8 @@
 #include <stm32f4xx.h>
 #include "Irq.h"
 
+using namespace Platform;
+
 Irq::Irq(int n) : irq(n) {
 }
 

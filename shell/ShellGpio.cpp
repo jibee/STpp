@@ -1,5 +1,6 @@
 #include "ShellGpio.h"
 
+using namespace Platform;
 
 Shell& operator<<(Shell& shell, Gpio& g) {
 	if(!shell.got_name) while(1);

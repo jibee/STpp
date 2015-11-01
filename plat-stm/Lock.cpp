@@ -1,5 +1,7 @@
 #include "Lock.h"
 
+using namespace Platform;
+
 Mutex::Mutex() {
 	sem = xSemaphoreCreateMutex();
 }

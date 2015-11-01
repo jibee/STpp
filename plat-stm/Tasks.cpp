@@ -1,5 +1,7 @@
 #include "Tasks.h"
 
+using namespace Platform;
+
 static void callFn(void *t) {
 	Task *f = (Task*) t;
 	f->f();

@@ -5,7 +5,8 @@
 #include <IStream.h>
 #include <Usb.h>
 #include <Lock.h>
-
+namespace Platform
+{
 class UsbSerial : public OStream, public IStream {
 	private:
 		Usb u;
@@ -22,5 +23,6 @@ class UsbSerial : public OStream, public IStream {
 		virtual bool available();
 		virtual void wait();
 };
+}
 #endif
 

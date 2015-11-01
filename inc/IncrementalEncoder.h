@@ -7,9 +7,9 @@
 // #TODO add support for the zero pin of the encoder
 class IncrementalEncoder {
 	private:
-		Gpio& encoderA;
-		Gpio& encoderB;
-		Timer& tim;
+		Platform::Gpio& encoderA;
+		Platform::Gpio& encoderB;
+		Platform::Timer& tim;
 
 		int counter;
 		int last_value;
@@ -17,7 +17,7 @@ class IncrementalEncoder {
 	public:
 		//Must be called often enough (less than half a timer cycle has been made since last update)
 		IncrementalEncoder& update();
-		IncrementalEncoder(Gpio& a, Gpio& b, Timer& t, int prescaler=0, bool reverse=false);
+		IncrementalEncoder(Platform::Gpio& a, Platform::Gpio& b, Platform::Timer& t, int prescaler=0, bool reverse=false);
 		int getCounter();
 		operator int();
 		int operator=(int);

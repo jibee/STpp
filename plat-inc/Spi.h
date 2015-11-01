@@ -1,12 +1,15 @@
 #ifndef _SPI_H
 #define _SPI_H
 
-#include "Gpio.h"
 #include <stm32f4xx.h>
 #include "OStream.h"
 #include "IStream.h"
-#include "Dma.h"
-
+namespace Platform
+{
+class Gpio;
+class DmaStream;
+/** SPI bus control 
+*/
 class Spi {
 	private:
 		int n;
@@ -31,5 +34,5 @@ class Spi {
 		Spi& send(char* s, int len);
 		Spi& configGpio(Gpio&);
 };
-
+}
 #endif /* _SPI_H */

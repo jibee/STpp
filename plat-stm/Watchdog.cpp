@@ -1,6 +1,7 @@
 #include <Watchdog.h>
 #include <stm32f4xx.h>
 
+using namespace Platform;
 Watchdog::Watchdog(int prescaler, int autoreload) {
 	int v = 0;
 	prescaler >>=2;

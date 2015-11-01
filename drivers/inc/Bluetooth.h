@@ -2,11 +2,11 @@
 #define _BLUETOOTH_H
 #include <Uart.h>
 
-class Bluetooth: public Uart {
+class Bluetooth: public Platform::Uart {
 	private:
 		const char *getAnswer();
 	public:
-		Bluetooth(int nb, Gpio& tx, Gpio& rx);
+		Bluetooth(int nb, Platform::Gpio& tx, Platform::Gpio& rx);
 		Bluetooth& setName(const char*);
 };
 

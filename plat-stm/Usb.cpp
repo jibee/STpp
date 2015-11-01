@@ -32,6 +32,8 @@ extern "C" {
 	}
 };
 
+using namespace Platform;
+
 void USB_OTG_BSP_Init(void) {
 	RCC->AHB2ENR |= 1<<7;
 }

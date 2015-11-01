@@ -4,6 +4,6 @@
 #include "Shell.h"
 #include "Gpio.h"
 
-Shell& operator<<(Shell&,Gpio&);
+Shell& operator<<(Shell&, Platform::Gpio&);
 
 #endif /* _SHELL_H */

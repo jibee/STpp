@@ -16,11 +16,11 @@ LidarNeato& operator>>(LidarNeato& i, lidar_neato_t& p);
 class LidarNeato {
 	private:
 		static uint16_t distances[360];
-		static Mutex distancesLock;
-		Uart &uart;
+		static Platform::Mutex distancesLock;
+		Platform::Uart &uart;
 	public:
 		static uint16_t getDistance(int pos);
-		LidarNeato(Gpio& rx, Uart& u);
+		LidarNeato(Platform::Gpio& rx, Platform::Uart& u);
 		friend LidarNeato& operator>>(LidarNeato& i, lidar_neato_t& p);
 };
 

@@ -7,7 +7,8 @@ extern "C" {
 #include "task.h"
 };
 #include <tr1/functional>
-
+namespace Platform
+{
 class Task {
 	public:
 		typedef std::tr1::function<void(void)> Function;
@@ -18,5 +19,5 @@ class Task {
 		void resume();
 		static void yield();
 };
-
+}
 #endif /* _TASKS_H */

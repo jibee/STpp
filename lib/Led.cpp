@@ -1,5 +1,7 @@
 #include <Led.h>
 
+using namespace Platform;
+
 Led::Led(Gpio p, bool rev) :_p(p), _rev(rev) {
 	p.setDirection(Gpio::OUTPUT);
 	p.setPushPull();

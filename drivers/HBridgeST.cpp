@@ -1,6 +1,8 @@
 #include "HBridgeST.h"
 #include "Log.h"
 
+using namespace Platform;
+
 HBridgeST::HBridgeST(Gpio& a, Gpio& b, Gpio& p,
 		Timer& tim, int chan) : propa(a), propb(b), pwm(p, tim, chan, 3, 1024){
 	propa

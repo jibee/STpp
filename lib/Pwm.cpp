@@ -1,5 +1,7 @@
 #include <Pwm.h>
 
+using namespace Platform;
+
 Pwm::Pwm(Gpio &p, Timer &t, int n, int pre, int atr) :
 	gpio(p), tim(t), chan(n) {
 
