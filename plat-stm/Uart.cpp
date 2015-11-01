@@ -25,27 +25,32 @@ static void irq_handler(volatile USART_TypeDef* b, int i) {
 		portEND_SWITCHING_ISR(v);
 	}
 }
-
+/** actual handler for UART1 */
 void USART1_IRQHandler() {
-	irq_handler(USART2, 1);
+	irq_handler(USART1, 1);
 }
 
+/** actual handler for UART2 */
 void USART2_IRQHandler() {
 	irq_handler(USART2, 2);
 }
 
+/** actual handler for UART3 */
 void USART3_IRQHandler() {
 	irq_handler(USART3, 3);
 }
 
+/** actual handler for UART4 */
 void UART4_IRQHandler() {
 	irq_handler(UART4, 4);
 }
 
+/** actual handler for UART5 */
 void UART5_IRQHandler() {
 	irq_handler(UART5, 5);
 }
 
+/** actual handler for UART6 */
 void USART6_IRQHandler() {
 	irq_handler(USART6, 6);
 }
