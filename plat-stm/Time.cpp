@@ -5,9 +5,9 @@ extern "C" {
 #include <task.h>
 };
 
-using namespace Platform;
+using namespace RTOS;
 
-Time::Time(Timer& t) :
+Time::Time(Platform::Timer& t) :
 	timer(t) {
 
 	timer
@@ -15,13 +15,13 @@ Time::Time(Timer& t) :
 		.setOneShot(true);
 }
 
-void Time::usleep(int t) {
+void Time::usleep(int useconds) {
 	timer
-		.setAutoReload(t)
+		.setAutoReload(useconds)
 		.enable();
 	while(timer);
 }
 
-void Time::msleep(int t) {
-	vTaskDelay(t);
+void Time::msleep(int mseconds) {
+	vTaskDelay(mseconds);
 }

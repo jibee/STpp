@@ -56,7 +56,7 @@ extern Pwm LedR;
 extern Gpio UserButton;
 
 //Which timer to use for precise (<1ms) timing
-extern Time time;
+extern RTOS::Time time;
 
 extern Gpio Zigbee_RX;
 extern Gpio Zigbee_TX;

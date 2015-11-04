@@ -24,7 +24,7 @@ static Shell shell;
 int main() {
 	UsbSerial usb;
 
-	Task lidar_task([&usb]() {
+	RTOS::Task lidar_task([&usb]() {
 		LidarNeato lidar(External_RX, ExternalUart);
 		while(true) {
 			lidar_neato_t lidar_packet;

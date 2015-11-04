@@ -94,7 +94,7 @@ void RPC::runLogic() {
 }
 
 void RPC::run() {
-	Task Ingoing([this]() { waitIngoing();}, "Ingoing RPC", 128);
+	RTOS::Task Ingoing([this]() { waitIngoing();}, "Ingoing RPC", 128);
 	runLogic();
 }
 

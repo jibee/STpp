@@ -79,7 +79,7 @@ Gpio g_RLed4(GpioD[3]);
 Gpio UserButton(GpioA[0]);
 
 //Which timer to use for precise (<1ms) timing
-Time time(Tim14);
+RTOS::Time time(Tim14);
 
 Gpio Ax12Tx(GpioA[2]);
 Gpio Ax12Rx(GpioA[3]);

@@ -1,6 +1,6 @@
 #include "Tasks.h"
 
-using namespace Platform;
+using namespace RTOS;
 
 static void callFn(void *t) {
 	Task *f = (Task*) t;
