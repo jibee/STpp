@@ -16,7 +16,7 @@ LidarNeato& operator>>(LidarNeato& i, lidar_neato_t& p);
 class LidarNeato {
 	private:
 		static uint16_t distances[360];
-		static Platform::Mutex distancesLock;
+		static RTOS::Mutex distancesLock;
 		Platform::Uart &uart;
 	public:
 		static uint16_t getDistance(int pos);

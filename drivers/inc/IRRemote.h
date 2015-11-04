@@ -10,8 +10,8 @@ class IRRemote {
 		Platform::Timer& t;
 		Platform::Gpio& g;
 
-		Platform::BinarySemaphore dataAvailable;
-		Platform::BinarySemaphore dataReleased;
+		RTOS::BinarySemaphore dataAvailable;
+		RTOS::BinarySemaphore dataReleased;
 		uint32_t word;
 		uint32_t tmpWord;
 	public:

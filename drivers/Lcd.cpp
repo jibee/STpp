@@ -112,19 +112,19 @@ Lcd& Lcd::functionSet(bool is_8bits, bool is_2lines, bool font) {
 }
 
 Lcd& Lcd::clearDisplay() {
-	AutoLock l(lock);
+	RTOS::AutoLock l(lock);
 	write(0, 0b00000001);
 	return *this;
 }
 
 Lcd& Lcd::returnHome() {
-	AutoLock l(lock);
+	RTOS::AutoLock l(lock);
 	write(0, 0b00000010);
 	return *this;
 }
 
 Lcd& Lcd::displaySet(bool on, bool cursor, bool blink) {
-	AutoLock l(lock);
+	RTOS::AutoLock l(lock);
 	int cmd = 0b00001000;
 	cmd |= blink ? 1 : 0;
 	cmd |= cursor ? 2 : 0;
@@ -134,7 +134,7 @@ Lcd& Lcd::displaySet(bool on, bool cursor, bool blink) {
 }
 
 Lcd& Lcd::setDirection(bool increment, bool display) {
-	AutoLock l(lock);
+	RTOS::AutoLock l(lock);
 	int cmd = 0b00000100;
 	cmd |= display ? 1 : 0;
 	cmd |= increment ? 2 : 0;
@@ -143,7 +143,7 @@ Lcd& Lcd::setDirection(bool increment, bool display) {
 }
 
 Lcd& Lcd::move(bool cursor, bool left) {
-	AutoLock l(lock);
+	RTOS::AutoLock l(lock);
 	int cmd = 0b00010000;
 	cmd |= left ? (1 << 2) : 0;
 	cmd |= cursor ? (2 << 2) : 0;

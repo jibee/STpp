@@ -5,9 +5,13 @@ extern "C" {
 #include <FreeRTOS.h>
 #include <semphr.h>
 };
-namespace Platform
+namespace RTOS
 {
-/** Mutex (implemented with a semaphore) */
+/** Mutex (implemented with a semaphore)
+ * 
+ * @todo decide whether this should be moved out of the Platform namespace entirely.
+ * Arguably this class does help the UART driver but does not really belong to the Platform.
+ */
 class Mutex {
     private:
 	xSemaphoreHandle sem;

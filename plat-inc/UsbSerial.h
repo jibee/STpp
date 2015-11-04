@@ -10,7 +10,7 @@ namespace Platform
 class UsbSerial : public OStream, public IStream {
 	private:
 		Usb u;
-		Mutex lock;
+		RTOS::Mutex lock;
 	public:
 		UsbSerial();
 		~UsbSerial();

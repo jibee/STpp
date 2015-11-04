@@ -2,7 +2,6 @@
 #include <Tasks.h>
 #include <Log.h>
 
-using namespace Platform;
 RPC::RPC(): in(NULL), out(NULL) {
 }
 

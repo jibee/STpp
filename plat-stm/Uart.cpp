@@ -133,7 +133,7 @@ Uart& Uart::put(char* s, int l) {
 			put(s[i]);
 		return *this;
 	}
-	AutoLock m(lock);
+	RTOS::AutoLock m(lock);
 	txDma(true);
 	base->SR  &= ~USART_SR_TC;
 	dma->
@@ -153,7 +153,7 @@ Uart& Uart::put(char c) {
 		while(! (base->SR & (1<<7)));
 		return *this;
 	}
-	AutoLock m(lock);
+	RTOS::AutoLock m(lock);
 	while(! (base->SR & (1<<7)));
 	base->DR = c;
 	while(! (base->SR & (1<<7)));
@@ -204,6 +204,7 @@ Uart& Uart::enable() {
 	//On RX
 	base->CR1 |= 1<<5;
 
+    /** SMELL: this is IRQ number mangling. I suggest to use a switch statement instead */
 	int irqnr = 0;
 	if(number < 4)
 		irqnr = USART1_IRQn + number - 1;
@@ -237,8 +238,8 @@ Uart& Uart::sendBreak() {
 	return *this;
 }
 
-Uart& Uart::setHalfDuplex(bool b) {
-	if(b) {
+Uart& Uart::setHalfDuplex(bool status) {
+	if(status) {
 		base->CR3 |= 1<<3;
 	} else {
 		base->CR3 &= ~(1<<3);

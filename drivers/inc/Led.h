@@ -6,7 +6,7 @@
 
 class Led {
 	private:
-		Platform::Mutex _m;
+		RTOS::Mutex _m;
 		Platform::Gpio _p;
 		bool _rev;
 	public:

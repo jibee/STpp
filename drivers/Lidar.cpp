@@ -51,7 +51,7 @@ LidarNeato& operator>>(LidarNeato& lidar, lidar_neato_t& packet) {
 	uart >> c;
 	packet.checksum |= c << 8;
 	{
-		AutoLock a(lidar.distancesLock);
+		RTOS::AutoLock a(lidar.distancesLock);
 		for(int i=0; i<4; ++i) {
 			int pos = (packet.index-0xa0)*4 + i;
 			//Should be reported
@@ -65,9 +65,9 @@ LidarNeato& operator>>(LidarNeato& lidar, lidar_neato_t& packet) {
 }
 
 uint16_t LidarNeato::getDistance(int angle) {
-	AutoLock a(distancesLock);
+	RTOS::AutoLock a(distancesLock);
 	return distances[angle];
 }
 
 uint16_t LidarNeato::distances[360];
-Mutex LidarNeato::distancesLock;
+RTOS::Mutex LidarNeato::distancesLock;

@@ -30,7 +30,7 @@ class Lcd {
 		void wait(bool quick);
 		Platform::Gpio RS, E, DB7, DB6, DB5, DB4;
 		bool is_4bit;
-		Platform::Mutex lock;
+		RTOS::Mutex lock;
 	public:
 		Lcd(Platform::Gpio RS, Platform::Gpio E, Platform::Gpio DB7, Platform::Gpio DB6, Platform::Gpio DB5, Platform::Gpio DB4);
 		// 0 0 0 0 0 0 0 1

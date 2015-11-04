@@ -1,6 +1,6 @@
 #include "Lock.h"
 
-using namespace Platform;
+using namespace RTOS;
 
 Mutex::Mutex() {
 	sem = xSemaphoreCreateMutex();
