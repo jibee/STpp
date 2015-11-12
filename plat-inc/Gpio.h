@@ -1,6 +1,10 @@
 #ifndef _GPIO_H
 #define _GPIO_H
 #include <stm32f4xx.h>
+/** Platform drivers 
+ * 
+ * 
+ */
 namespace Platform
 {
 class GpioPort;
@@ -82,18 +86,33 @@ class Gpio {
 	    AF_14=14,
 	    EVENT_OUT=15,
 	};
-/** When Function is Alternate, connects the specified function */
+    /** When Function is Alternate, connects the specified function */
 	Gpio& setAlternate(int);
-/** When Function is Alternate, connects the specified function */
+    /** When Function is Alternate, connects the specified function */
 	Gpio& setAlternate(AF);
 	/** Obtains the current output value */
 	inline operator bool() { return getState(); };
     private:
+    /** GpioPort this pin belongs to */
 	GpioPort *port;
+	/** Pin number of this Gpio within the GpioPort */
 	int number;
+	/** Function of this pin */
 	Gpio::Function function;
+	/** Direction */
 	Gpio::Direction direction;
-	Gpio(GpioPort*, int);
+	/** Constructor
+     * 
+     * @param port Gpio port this pin belongs to
+     * @param n pin number within the Gpio port
+     * 
+     * note this constructor is only to be used from the GpioPort class - see below.
+     */
+	Gpio(GpioPort* port, int n);
+	/**
+     * Update the mode register from the current values of function and direction
+     * 
+     */
 	void updateModeR();
 	friend class GpioPort;
 	friend class Exti;
@@ -106,6 +125,8 @@ class GpioPort {
     public:
 	/** Obtains the n-th IO pin in the port
 	  @return a GPIO control object
+	  @warning the resulting Gpio object will not reflect the actual configuration of the GPIO
+	  through a read-back of the registers.
 	 */
 	Gpio operator[](int n) {
 	    return Gpio(this, n);
@@ -118,6 +139,7 @@ class GpioPort {
 	friend class Gpio;
 	int getPortNumber();
 };
+
 /** Static GPIO ports definitions. */
 extern GpioPort GpioA;
 extern GpioPort GpioB;

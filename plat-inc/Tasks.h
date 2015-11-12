@@ -13,6 +13,11 @@ namespace RTOS
  * */
 class Task {
 	public:
+        /** Runnable function signature (takes no argument, returns nothing)
+         * 
+         * If you want to pass an argument you can use bind() to create a lambda 
+         * and conform it to this signature
+         */
 		typedef std::tr1::function<void(void)> Function;
         /** Handle to the function to be called when the task runs */
 		Function f;
@@ -35,4 +40,5 @@ class Task {
 		static void yield();
 };
 }
+
 #endif /* _TASKS_H */

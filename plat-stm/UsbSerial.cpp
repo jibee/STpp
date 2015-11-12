@@ -82,6 +82,7 @@ static uint16_t UsbSerial_DataRx (uint8_t* Buf, uint32_t Len) {
 	return USBD_OK;
 }
 
+/** unused ?? */
 CDC_IF_Prop_TypeDef UsbSerial_fops = 
 {
 	UsbSerial_Init,

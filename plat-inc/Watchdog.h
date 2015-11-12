@@ -1,13 +1,14 @@
 #ifndef _WATCHDOG_H
 #define _WATCHDOG_H
+namespace Platform
+{
+
 /** Clock-independant watchdog.
 
 This class controls the watchdog hardware. This is essentially a time counter
 which resets the CPU if not heartbeat is recorded for a certain amount of time.
 
 */
-namespace Platform
-{
 class Watchdog {
     public:
 	/**

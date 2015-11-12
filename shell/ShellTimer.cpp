@@ -1,6 +1,6 @@
 #include "ShellTimer.h"
 
-Shell& operator<<(Shell& shell, Timer& tim) {
+Shell& operator<<(Shell& shell, Platform::Timer& tim) {
 	if(!shell.got_name) while(1);
 
 	shell.add([&tim,&shell](Stack& s) {

@@ -3,7 +3,10 @@
 
 namespace Platform
 {
-/** CPU nested vectored interruptions management */
+/** CPU nested vectored interruptions management
+ * @todo find out what it entails? If that just a control part and the
+ * actual interrupt vectors are left untouched?
+ */
 class Irq {
     private:
 	int irq;

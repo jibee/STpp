@@ -4,6 +4,6 @@
 #include "Shell.h"
 #include "Timer.h"
 
-Shell& operator<<(Shell& s, Timer& tim);
+Shell& operator<<(Shell& s, Platform::Timer& tim);
 
 #endif /* _SHELL_TIMER_H */

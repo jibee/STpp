@@ -1,10 +1,11 @@
 #ifndef _TIME_H
 #define _TIME_H
 #include "Timer.h"
+/** Real-time OS services */
 namespace RTOS
 {
-    /** Sleep operations
-     * */
+/** Sleep operations
+* */
 class Time {
 	private:
 		Platform::Timer& timer;

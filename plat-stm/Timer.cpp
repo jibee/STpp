@@ -18,6 +18,7 @@ Timer::Timer(volatile TIM_TypeDef* b, int n) :
 	//TIM12: APB1 6
 	//...
 	//TIM14: APB1 8
+/** Enable the timer base clock */
 	switch(n) {
 		case 1:
 			SET_BIT(RCC->APB2ENR, 0);
@@ -72,6 +73,17 @@ Timer& Timer::setAutoReloadBuffered(bool v) {
 	}
 	return *this;
 }
+Timer& Timer::setUpdateDisable(bool disable)
+{
+    if(disable) {
+        base->CR1 |= TIM_CR1_UDIS;
+    } else {
+        base->CR1 &= ~TIM_CR1_UDIS;
+    }
+    
+    return *this;   
+}
+
 
 Timer& Timer::setCounter(unsigned short v) {
 	base->CNT = v;
@@ -128,6 +140,7 @@ Timer& Timer::setChannelMode(int chan, ChannelMode m) {
 			break;
 	}
 
+	/** @warning pointer arithmetics is BAD */
 	volatile uint16_t *CCMR=&(base->CCMR1);
 	if(chan>=2) {
 		CCMR+=2;
@@ -148,7 +161,7 @@ Timer& Timer::setChannelOutput(int chan, bool o) {
 	}
 	return *this;
 }
-
+/** TODO Timer 2 and 5 - this is a 32 bit value */
 Timer& Timer::setChannelComparator(int chan, unsigned short v) {
 	chan--;
 	volatile unsigned int *b=(volatile unsigned int*)&(base->CCR1);
@@ -157,6 +170,7 @@ Timer& Timer::setChannelComparator(int chan, unsigned short v) {
 	return *this;
 }
 
+/** TODO Timer 2 and 5 - this is a 32 bit value */
 unsigned short Timer::getChannelComparator(int chan) {
 	chan--;
 	volatile unsigned int *b=(volatile unsigned int*)&(base->CCR1);
@@ -241,8 +255,8 @@ Timer& Timer::setSlaveModeSelection(int v){
 
 
 //Interrupt handling
-Timer& Timer::setUIE(bool s) {
-	if(s)
+Timer& Timer::setUIE(bool enable) {
+	if(enable)
 		base->DIER |= 1;
 	else
 		base->DIER &= ~1;
@@ -271,7 +285,7 @@ Timer& Timer::setTopCB(Callback cb) {
 	return *this;
 }
 
-/*
+/**
  * Used to set the AF function of a GPIO if it is used with this timer
  */
 Timer& Timer::setAlternate(Gpio& gpio) {
@@ -294,6 +308,7 @@ Timer& Timer::setAlternate(Gpio& gpio) {
 int Timer::irqNr() {
 	//Most interesting function ever.
 	switch(number) {
+        // no Interrupt number for timer 1?
 		case 2:  return TIM2_IRQn;
 		case 3:  return TIM3_IRQn;
 		case 4:  return TIM4_IRQn;
@@ -311,8 +326,10 @@ int Timer::irqNr() {
 	};
 	return 0;
 }
-
+/** IRQ handlers
+ * */
 extern "C" {
+    // Timer 9 10 11 partagent un IRQ avec Timer1 ?
 	void TIM1_BRK_TIM9_IRQHandler() {
 		TIM9->SR &= ~1;
 		Timer::callTopCb(9);
