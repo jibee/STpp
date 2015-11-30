@@ -108,4 +108,4 @@ examples/%: examples/%.o $(OBJS)
 endif
 
 clean:
-	-rm -f examples/*.flash examples/*.ram $(FREERTOS_OBJS) $(LIB_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS)
+	-rm -f examples/*.flash examples/*.ram $(FREERTOS_OBJS) $(LIB_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS)
