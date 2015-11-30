@@ -46,6 +46,7 @@ Spi& Spi::master() {
 	return *this;
 }
 
+
 Spi& Spi::setDivisorPow2(int v) {
 	base->CR1 &= ~SPI_CR1_BR;
 	v &= 0x7;

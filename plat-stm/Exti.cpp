@@ -88,7 +88,6 @@ Exti& Exti::enableIRQ() {
 		.enable();
 	return *this;
 }
-
 Exti& Exti::disableIRQ() {
 	EXTI->IMR &= ~(1<<chan);
 	Irq(irq_n())
@@ -128,7 +127,10 @@ Exti& Exti::setBottomCB(Callback cb) {
 
 void Exti::setGpioPort(int port) {
 	//SYSCFG_EXTICR1..4
+    // Ensure the System configuration controller clock is active
 	RCC->APB2ENR |= 1 << 14;
+    /// @smell pointer arithmetics
+    /// @smell instance variable is hidden by the function parameter
 	volatile uint32_t *base = SYSCFG->EXTICR;
 	base += chan/4;
 	int c = chan%4;

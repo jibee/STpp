@@ -4,6 +4,16 @@
 #include "Shell.h"
 #include "Pwm.h"
 
-Shell& operator<<(Shell& s, Pwm& enc);
+template<class TIMER_T>
+Shell& operator<<(Shell& shell, Pwm<TIMER_T>& pwm)
+{
+    if(!shell.got_name) while(1);
+
+    addSetter(shell, pwm, setComparator);
+    addSetter(shell, pwm, setDutyCycle);
+
+    shell.got_name = false;
+    return shell;
+}
 
 #endif /* _SHELL_PWM_H */

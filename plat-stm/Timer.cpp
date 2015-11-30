@@ -85,8 +85,8 @@ Timer& Timer::setUpdateDisable(bool disable)
 }
 
 
-Timer& Timer::setCounter(unsigned short v) {
-	base->CNT = v;
+Timer& Timer::setCounter(uint16_t value) {
+	base->CNT = value;
 	return *this;
 }
 
@@ -160,22 +160,6 @@ Timer& Timer::setChannelOutput(int chan, bool o) {
 		base->CCER &= ~(1 << (4*chan));
 	}
 	return *this;
-}
-/** TODO Timer 2 and 5 - this is a 32 bit value */
-Timer& Timer::setChannelComparator(int chan, unsigned short v) {
-	chan--;
-	volatile unsigned int *b=(volatile unsigned int*)&(base->CCR1);
-	b+=chan;
-	*b=v;
-	return *this;
-}
-
-/** TODO Timer 2 and 5 - this is a 32 bit value */
-unsigned short Timer::getChannelComparator(int chan) {
-	chan--;
-	volatile unsigned int *b=(volatile unsigned int*)&(base->CCR1);
-	b+=chan;
-	return *b;
 }
 
 Timer& Timer::wait() {
@@ -285,25 +269,6 @@ Timer& Timer::setTopCB(Callback cb) {
 	return *this;
 }
 
-/**
- * Used to set the AF function of a GPIO if it is used with this timer
- */
-Timer& Timer::setAlternate(Gpio& gpio) {
-	if (number <= 2) 
-		gpio.setAlternate(Gpio::TIM1_2);
-	else if (number <= 5)
-		gpio.setAlternate(Gpio::TIM3_5);
-	else if (number <= 7)
-		// There are no PWM output for TIM6 and TIM7
-		for(;;);
-	else if (number <= 11)
-		gpio.setAlternate(Gpio::TIM8_11);
-	else if (number <= 14)
-		gpio.setAlternate(Gpio::CAN1_2_TIM12_14);
-	else
-		for(;;);
-	return *this;
-}
 
 int Timer::irqNr() {
 	//Most interesting function ever.

@@ -20,7 +20,7 @@ class Watchdog {
 	  calculated by mutliplying the prescaler with the autoreload
 	 */
 	Watchdog(int prescaler, int autoreload);
-	/** Starts the watchdog. From now on the software must call @link{reset()}
+	/** Starts the watchdog. From now on the software must call @link reset @endlink
 	  regularly to prevent the watchdog to automatically reset the CPU.
 	 */
 	Watchdog& start();
@@ -31,5 +31,6 @@ class Watchdog {
 	/** Do not suspend the watchdog when the dubugger stops the CPU */
 	Watchdog& continueOnDebug();
 };
+
 }
 #endif /* _WATCHDOG_H */

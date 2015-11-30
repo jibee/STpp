@@ -1,9 +1,9 @@
 #ifndef _GPIO_H
 #define _GPIO_H
 #include <stm32f4xx.h>
-/** Platform drivers 
- * 
- * 
+/** Platform drivers
+ *
+ *
  */
 namespace Platform
 {
@@ -26,32 +26,46 @@ class Gpio {
 	    /** Analog input or output */
 	    ANALOG
 	};
-	/** Sets the IO direction - input output or the special analog case */
-	Gpio& setDirection(Gpio::Direction);
+	/** Sets the IO direction - input output or the special analog case
+	 * @param dir direction to be set for the pin
+	 */
+	Gpio& setDirection(Gpio::Direction dir);
 	/** IO Speed / slew rate control */
 	enum Speed {
+	    /** 100 MHz slew rate */
 	    SPEED_100MHz,
+	    /** 50 MHz slew rate */
 	    SPEED_50MHz,
+	    /** 25 MHz slew rate */
 	    SPEED_25MHz,
+	    /** 2 MHz slew rate */
 	    SPEED_2MHz
 	};
-	/** Set the IO slew rate */
-	Gpio& setSpeed(Gpio::Speed);
+	/** Set the IO slew rate
+	 *
+	 * @param speed slew rate specification to be set.
+	 */
+	Gpio& setSpeed(Gpio::Speed speed);
 	/** Set the IO as push-pull */
 	Gpio& setPushPull();
 	/** Set the IO as open drain */
 	Gpio& setOpenDrain();
-	/** Function types for OUTPUT and INPUT directions */ 
+	/** Function types for OUTPUT and INPUT directions */
 	enum Function {
 	    /** control and readback via the GPIO boolean value */
 	    GPIO,
 	    /** control from a specific hardware function */
 	    ALTERNATE
 	};
-	/** Sets the control logic for INPUT and OUTPUT directions */
-	Gpio& setFunction(Gpio::Function);
-	/** When Direction=INPUT and Function=GPIO, sets the output to the given value */
-	Gpio& setState(bool);
+	/** Sets the control logic for INPUT and OUTPUT directions
+	 * @param f type of pin function - GPIO or ALTERNATE
+	 */
+	Gpio& setFunction(Gpio::Function f);
+	/** When Direction=INPUT and Function=GPIO, sets the output to the given value
+	 *
+	 * @param value true for a high level, false for a low level
+	 */
+	Gpio& setState(bool value);
 	/** Obtains the current output value */
 	bool getState();
 	/** Output weak resistor - pull up, pull down or none */
@@ -64,9 +78,9 @@ class Gpio {
 	    PULL_DOWN,
 	};
 	/** Sets the output resistor
-	  @param Resistor resistor specification
+	  @param r resistor specification
 	 */
-	Gpio& setResistor(Resistor);
+	Gpio& setResistor(Resistor r);
 	/** Alternative function choice */
 	enum AF {
 	    SYSTEM=0,
@@ -86,14 +100,21 @@ class Gpio {
 	    AF_14=14,
 	    EVENT_OUT=15,
 	};
-    /** When Function is Alternate, connects the specified function */
-	Gpio& setAlternate(int);
-    /** When Function is Alternate, connects the specified function */
-	Gpio& setAlternate(AF);
+	/** When Function is Alternate, connects the specified function
+	 *
+	 * @param f function code - 0 to 15
+	 * @deprecated better use the AF enum
+	 */
+	Gpio& setAlternate(int f);
+	/** When Function is Alternate, connects the specified function
+	 *
+	 * @param f function code
+	 */
+	Gpio& setAlternate(AF f);
 	/** Obtains the current output value */
 	inline operator bool() { return getState(); };
     private:
-    /** GpioPort this pin belongs to */
+	/** GpioPort this pin belongs to */
 	GpioPort *port;
 	/** Pin number of this Gpio within the GpioPort */
 	int number;
@@ -102,17 +123,17 @@ class Gpio {
 	/** Direction */
 	Gpio::Direction direction;
 	/** Constructor
-     * 
-     * @param port Gpio port this pin belongs to
-     * @param n pin number within the Gpio port
-     * 
-     * note this constructor is only to be used from the GpioPort class - see below.
-     */
+	 *
+	 * @param port Gpio port this pin belongs to
+	 * @param n pin number within the Gpio port
+	 *
+	 * note this constructor is only to be used from the GpioPort class - see below.
+	 */
 	Gpio(GpioPort* port, int n);
 	/**
-     * Update the mode register from the current values of function and direction
-     * 
-     */
+	 * Update the mode register from the current values of function and direction
+	 *
+	 */
 	void updateModeR();
 	friend class GpioPort;
 	friend class Exti;
@@ -137,20 +158,35 @@ class GpioPort {
 	 */
 	GpioPort(volatile GPIO_TypeDef* b);
 	friend class Gpio;
+	/** Obtains the number of the port represented by this port bank
+	 *
+	 * */
 	int getPortNumber();
 };
 
-/** Static GPIO ports definitions. */
+/** @name Static GPIO ports definitions.
+*
+* */
+///@{
+/** GPIO Port A */
 extern GpioPort GpioA;
+/** GPIO Port B */
 extern GpioPort GpioB;
+/** GPIO Port B */
 extern GpioPort GpioC;
+/** GPIO Port D */
 extern GpioPort GpioD;
+/** GPIO Port E */
 extern GpioPort GpioE;
+/** GPIO Port F */
 extern GpioPort GpioF;
+/** GPIO Port G */
 extern GpioPort GpioG;
+/** GPIO Port H */
 extern GpioPort GpioH;
+/** GPIO Port I */
 extern GpioPort GpioI;
-
+///@}
 inline bool Gpio::getState() { return !!(port->base->IDR&(1<<number)); };
 }
 #endif /* _GPIO_H */

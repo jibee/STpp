@@ -4,14 +4,45 @@
 #include <Timer.h>
 #include <Pwm.h>
 
+/**
+ * Driver for a directly-connected integrated H-bridge such as ST' L298
+ *
+ * */
+template <class TIMER>
 class HBridgeST {
-	private:
-		Platform::Gpio propa;
-		Platform::Gpio propb;
-		Pwm pwm;
-	public:
-		HBridgeST(Platform::Gpio& a, Platform::Gpio& b, Platform::Gpio& pwm, Platform::Timer& tim, int chan);
-		void setSpeed(int);
+    private:
+	Platform::Gpio propa;
+	Platform::Gpio propb;
+	Pwm<TIMER> pwm;
+    public:
+	HBridgeST(Platform::Gpio& a, Platform::Gpio& b, Platform::Gpio& pwm, TIMER& tim, int chan);
+	void setSpeed(int);
 };
+
+template <class TIMER>
+HBridgeST<TIMER>::HBridgeST(Platform::Gpio& a, Platform::Gpio& b, Platform::Gpio& p,
+	TIMER& tim, int chan) : propa(a), propb(b), pwm(p, tim, chan, 3, 1024){
+    propa
+	.setDirection(Platform::Gpio::OUTPUT)
+	.setState(false);
+    propb
+	.setDirection(Platform::Gpio::OUTPUT)
+	.setState(false);
+}
+
+template <class TIMER>
+void HBridgeST<TIMER>::setSpeed(int s){
+    if (s==0) {
+	propa.setState(false);
+	propb.setState(false);
+    } else if (s<0) {
+	propa.setState(true);
+	propb.setState(false);
+    } else {
+	propa.setState(false);
+	propb.setState(true);
+    }
+    pwm.setComparator((s<0) ? -s : s);
+}
 
 #endif /* _HBRIDGE_ST_H */

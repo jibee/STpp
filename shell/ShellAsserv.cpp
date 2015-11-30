@@ -1,10 +1,10 @@
 #include "ShellAsserv.h"
 
-OStream& operator<<(OStream& o, VelocityAccel& i) {
+OStream& operator<<(OStream& o, const VelocityAccel& i) {
 	o << " Current Angle = " << i.getAngle() << endl;
 	o << " Current Distance = " << i.getDist() << endl;
-	o << " Target Angle = " << i.targetAngle << endl;
-	o << " Target Distance = " << i.targetDist << endl;
+	o << " Target Angle = " << i.getTargetAngle() << endl;
+	o << " Target Distance = " << i.getTargetDistance() << endl;
 	o << " Delta Angle = " << i.getDeltaAngle() << endl;
 	o << " Delta Distance = " << i.getDeltaDist() << endl;
 	o << " Integral Angle = " << i.getIntegralAngle() << endl;
@@ -22,14 +22,14 @@ OStream& operator<<(OStream& o, VelocityAccel& i) {
 	return o;
 }
 
-OStream& operator<<(OStream& o, Position& p) {
+OStream& operator<<(OStream& o, const Position& p) {
 	o << "X = " << (int)(p.x*1000) << " mm" << endl;
 	o << "Y = " << (int)(p.y*1000) << " mm" << endl;
 	o << "Theta = " << (int)(p.theta*10) << " deciDegres" << endl;
 	return o;
 }
 
-Shell& operator<<(Shell& shell, Asserv& a) {
+Shell& operator<<(Shell& shell, _AsservBase& a) {
 	if(!shell.got_name) while(1);
 
 	addSetter(shell, a, setTargetAngle);
@@ -66,26 +66,7 @@ Shell& operator<<(Shell& shell, Asserv& a) {
 	shell.add([&a,&shell](Stack& s) {
 		(void)s;
 		OStream& o = *(shell.out);
-
-		o << "Asserv" << endl;
-		o << a.infos;
-		o << "Coefficients" << endl;
-		o << "Dist.... Angle..." << endl;
-
-		o << "     Proportional" << endl;
-		o << a.c_propDist << " " << a.c_propAngle << endl;
-
-		o << "     Integral" << endl;
-		o << a.c_intDist << " " << a.c_intAngle << endl;
-
-		o << "     Derivative" << endl;
-		o << a.c_velDist << " " << a.c_velAngle << endl;
-
-		o << "     Acceleration" << endl;
-		o << a.c_accelDist << " " << a.c_accelAngle << endl;
-
-		o << "     Position" << endl;
-		o << a.position;
+        o << a;
 	}, shell.current_object);
 
 	shell.got_name = false;

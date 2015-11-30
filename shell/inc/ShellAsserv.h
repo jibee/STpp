@@ -4,6 +4,6 @@
 #include "Shell.h"
 #include "Asserv.h"
 
-Shell& operator<<(Shell&, Asserv&);
+Shell& operator<<(Shell&, _AsservBase&);
 
 #endif /* _SHELL_H */

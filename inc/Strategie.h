@@ -6,10 +6,10 @@
 class Strategie {
 	private:
 		Ax12& mamoutor_servo;
-		Asserv& asserv;
+		_AsservBase& asserv;
 
 	public:
-		Strategie(Ax12&, Asserv&);
+		Strategie(Ax12&, _AsservBase&);
 		void run();
 
 		void mamoutor();

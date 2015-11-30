@@ -13,30 +13,30 @@ using namespace Platform;
 extern Gpio Prop0_PWM;
 extern Gpio Prop0A;
 extern Gpio Prop0B;
-extern HBridgeST HBridge0;
+extern HBridgeST<GeneralPurposeTimer<uint32_t,4> > HBridge0;
 
 extern Gpio Enc0A;
 extern Gpio Enc0B;
-extern IncrementalEncoder Encoder0;
+extern IncrementalEncoder16 Encoder0;
 
 extern Gpio Prop1_PWM;
 extern Gpio Prop1A;
 extern Gpio Prop1B;
-extern HBridgeST HBridge1;
+extern HBridgeST<GeneralPurposeTimer<uint32_t,4>> HBridge1;
 
 extern Gpio Enc1A;
 extern Gpio Enc1B;
-extern IncrementalEncoder Encoder1;
+extern IncrementalEncoder16 Encoder1;
 
 extern Gpio Prop2_PWM;
 extern Gpio Prop2A;
 extern Gpio Prop2B;
-extern HBridgeST Hbridge2;
+extern HBridgeST<AdvancedControlTimer> Hbridge2;
 
 extern Gpio Prop3_PWM;
 extern Gpio Prop3A;
 extern Gpio Prop3B;
-extern HBridgeST Hbridge3;
+extern HBridgeST<AdvancedControlTimer> Hbridge3;
 
 //USB
 extern Gpio USB_Vbus_OC;
@@ -47,10 +47,10 @@ extern Gpio USB_DM;
 extern Gpio USB_DP;
 
 //On-board leds
-extern Pwm LedG;
-extern Pwm LedO;
-extern Pwm LedB;
-extern Pwm LedR;
+extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedG;
+extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedO;
+extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedB;
+extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedR;
 
 //Extra
 extern Gpio UserButton;

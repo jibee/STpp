@@ -13,19 +13,19 @@ void VelocityAccelPerEncoderCompute::compute(int v) {
 	last = v;
 }
 
-int VelocityAccelPerEncoderCompute::getVelocity() {
+int VelocityAccelPerEncoderCompute::getVelocity() const{
 	return lastVelocity;
 }
 
-int VelocityAccelPerEncoderCompute::getAccel() {
+int VelocityAccelPerEncoderCompute::getAccel() const{
 	return lastAccel;
 }
 
-int VelocityAccelPerEncoderCompute::getCurrent() {
+int VelocityAccelPerEncoderCompute::getCurrent() const{
 	return last;
 }
 
-VelocityAccelPerEncoderCompute::operator int() {
+VelocityAccelPerEncoderCompute::operator int() const{
 	return last;
 }
 
@@ -95,42 +95,42 @@ void VelocityAccel::compute(int targetDist, int targetAngle) {
 		intDist = getDeltaDist() + intDist*255/256;
 }
 
-int VelocityAccel::getIntegralAngle() {
+int VelocityAccel::getIntegralAngle() const {
 	return intAngle;
 }
 
-int VelocityAccel::getIntegralDist() {
+int VelocityAccel::getIntegralDist() const{
 	return intDist;
 }
 
-int VelocityAccel::getAngle() {
+int VelocityAccel::getAngle() const {
 	return (left-right)/2;
 }
 
-int VelocityAccel::getDist() {
+int VelocityAccel::getDist() const {
 	return (left+right)/2;
 }
 
-int VelocityAccel::getDeltaAngle() {
+int VelocityAccel::getDeltaAngle() const{
 	return targetAngle - getAngle();
 }
 
-int VelocityAccel::getDeltaDist() {
+int VelocityAccel::getDeltaDist() const {
 	return targetDist - getDist();
 }
 
-int VelocityAccel::getVelocityAngle() {
+int VelocityAccel::getVelocityAngle() const {
 	return (left.getVelocity() - right.getVelocity())/2;
 }
 
-int VelocityAccel::getVelocityDist() {
+int VelocityAccel::getVelocityDist() const{
 	return (left.getVelocity() + right.getVelocity())/2;
 }
 
-int VelocityAccel::getAccelAngle() {
+int VelocityAccel::getAccelAngle() const {
 	return (left.getAccel() - right.getAccel())/2;
 }
 
-int VelocityAccel::getAccelDist() {
+int VelocityAccel::getAccelDist() const {
 	return (left.getAccel() + right.getAccel())/2;
 }

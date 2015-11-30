@@ -35,7 +35,7 @@ int main() {
 	usb << "Hello !" << endl;
 	shell.setStream(&usb, &usb);
 
-	Asserv asserv(Encoder1, Encoder0, Tim13, HBridge1, HBridge0);
+	Asserv<GeneralPurposeTimer<uint32_t,4>> asserv(Encoder1, Encoder0, Tim13, HBridge1, HBridge0);
 	//Use _ prefix as a hideme for autocompletion
 	shell << "_UserButton" << UserButton;
 
@@ -79,7 +79,8 @@ int main() {
 		(void)s;
 		asserv.reset();
 		//mamoutor.disable();
-		Encoder0 = Encoder1 = 0;
+		Encoder0.setValue(0);
+		Encoder1.setValue(0);
 	}, "reset");
 
 	shell.add([&usb](Stack& s) {
