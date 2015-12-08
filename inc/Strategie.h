@@ -7,9 +7,10 @@ class Strategie {
 	private:
 		Ax12& mamoutor_servo;
 		_AsservBase& asserv;
+		RTOS::Time& time;
 
 	public:
-		Strategie(Ax12&, _AsservBase&);
+		Strategie(Ax12& a, _AsservBase& asserv, RTOS::Time& t);
 		void run();
 
 		void mamoutor();

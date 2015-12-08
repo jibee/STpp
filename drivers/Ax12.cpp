@@ -4,8 +4,8 @@
 
 static char buf[16] __attribute((section("dma")));
 static char *bufPos = buf;
-Ax12::Ax12(Gpio g, Uart u, int i) :
-	uart(u), id(i), g(0) {
+Ax12::Ax12(RTOS::Time& microTimer, Gpio g, Uart u, int i) :
+	time(microTimer), uart(u), id(i), g(0) {
 
 	u.configGpio(g);
 	g
@@ -27,7 +27,7 @@ Ax12::Ax12(Gpio g, Uart u, int i) :
 	bufPos = buf;
 }
 
-Ax12::Ax12(Uart u, int i, Gpio *g, Gpio& rx, Gpio& tx) : uart(u), id(i), g(g) {
+Ax12::Ax12(RTOS::Time& microTimer, Uart u, int i, Gpio *g, Gpio& rx, Gpio& tx) : time(microTimer), uart(u), id(i), g(g) {
 	u.configGpio(rx, tx);
 	g
 		->setPushPull()

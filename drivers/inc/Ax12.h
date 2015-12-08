@@ -2,9 +2,12 @@
 #define _AX12_H
 
 #include <Uart.h>
+#include <Time.h>
+
 namespace P=Platform;
 class Ax12 {
 	private:
+        RTOS::Time& time;
 		P::Uart uart;
 		int id;
 		P::Gpio *g;
@@ -20,9 +23,9 @@ class Ax12 {
 		void flush();
 	public:
 		//One wire
-		Ax12(P::Gpio g, P::Uart u, int i);
+		Ax12(RTOS::Time& microTimer, P::Gpio g, P::Uart u, int i);
 		//Three wires
-		Ax12(P::Uart u, int i, P::Gpio *sw, P::Gpio& rx, P::Gpio& tx);
+		Ax12(RTOS::Time& microTimer, Platform::Uart u, int i, Platform::Gpio* g, Platform::Gpio& rx, Platform::Gpio& tx);
 		Ax12& setLed(bool);
 		Ax12& ping();
 

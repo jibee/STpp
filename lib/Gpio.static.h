@@ -4,6 +4,7 @@
 namespace Platform
 {
 //DM00031020.pdf p53
+#if 0
 GpioPort GpioA(GPIOA);
 GpioPort GpioB(GPIOB);
 GpioPort GpioC(GPIOC);
@@ -13,4 +14,5 @@ GpioPort GpioF(GPIOF);
 GpioPort GpioG(GPIOG);
 GpioPort GpioH(GPIOH);
 GpioPort GpioI(GPIOI);
+#endif
 }

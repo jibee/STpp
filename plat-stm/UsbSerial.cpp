@@ -97,7 +97,7 @@ extern USBD_DEVICE USR_desc;
 extern USBD_Usr_cb_TypeDef USR_cb;
 
 using namespace Platform;
-UsbSerial::UsbSerial() {
+UsbSerial::UsbSerial(STM32F4_WithUSB& board): u(board) {
 	USBD_Init(&USB_OTG_dev,
 			USB_OTG_FS_CORE_ID,
 			&USR_desc,

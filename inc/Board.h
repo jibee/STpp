@@ -1,3 +1,6 @@
+#ifndef PLATFORM_BOARD_H
+#define PLATFORM_BOARD_H
+
 #include <Led.h>
 #include <Pwm.h>
 #include <Time.h>
@@ -6,78 +9,92 @@
 #include <IncrementalEncoder.h>
 #include <Uart.h>
 #include <Ax12.h>
+#include <DiscoveryBoard.hpp>
+
 
 using namespace Platform;
 
-// Motor control
-extern Gpio Prop0_PWM;
-extern Gpio Prop0A;
-extern Gpio Prop0B;
-extern HBridgeST<GeneralPurposeTimer<uint32_t,4> > HBridge0;
+class Board: public DiscoveryBoard
+{
+    private:
+    DmaStream ZigbeeUartDma;
+public:
+    Gpio g_RLed1;
+    Gpio g_RLed2;
+    Gpio g_RLed3;
+    Gpio g_RLed4;
+    Gpio Ax12Tx;
+    Gpio Ax12En;
+    Gpio Ax12Rx;
+private:
+    DmaStream Ax12UartDma;
+    DmaStream ExternalUartDma;
+    public:
+	Board();
 
-extern Gpio Enc0A;
-extern Gpio Enc0B;
-extern IncrementalEncoder16 Encoder0;
+	// Motor control
+	Gpio Prop0_PWM;
+	Gpio Prop0A;
+	Gpio Prop0B;
+	HBridgeST<GeneralPurposeTimer<uint32_t,4> > HBridge0;
 
-extern Gpio Prop1_PWM;
-extern Gpio Prop1A;
-extern Gpio Prop1B;
-extern HBridgeST<GeneralPurposeTimer<uint32_t,4>> HBridge1;
+	Gpio Enc0A;
+	Gpio Enc0B;
+	IncrementalEncoder16 Encoder0;
 
-extern Gpio Enc1A;
-extern Gpio Enc1B;
-extern IncrementalEncoder16 Encoder1;
+	Gpio Prop1_PWM;
+	Gpio Prop1A;
+	Gpio Prop1B;
+	HBridgeST<GeneralPurposeTimer<uint32_t,4>> HBridge1;
 
-extern Gpio Prop2_PWM;
-extern Gpio Prop2A;
-extern Gpio Prop2B;
-extern HBridgeST<AdvancedControlTimer> Hbridge2;
+	Gpio Enc1A;
+	Gpio Enc1B;
+	IncrementalEncoder16 Encoder1;
 
-extern Gpio Prop3_PWM;
-extern Gpio Prop3A;
-extern Gpio Prop3B;
-extern HBridgeST<AdvancedControlTimer> Hbridge3;
+	Gpio Prop2_PWM;
+	Gpio Prop2A;
+	Gpio Prop2B;
+	HBridgeST<AdvancedControlTimer> Hbridge2;
 
-//USB
-extern Gpio USB_Vbus_OC;
-extern Gpio USB_Vbus_en;
-extern Gpio USB_Vbus_det;
-extern Gpio USB_ID;
-extern Gpio USB_DM;
-extern Gpio USB_DP;
+	Gpio Prop3_PWM;
+	Gpio Prop3A;
+	Gpio Prop3B;
+	HBridgeST<AdvancedControlTimer> Hbridge3;
 
-//On-board leds
-extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedG;
-extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedO;
-extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedB;
-extern Pwm<GeneralPurposeTimer<uint16_t,4>> LedR;
+    Gpio Zigbee_RX;
+    Gpio Zigbee_TX;
+    Uart Zigbee_UART;
 
-//Extra
-extern Gpio UserButton;
 
-//Which timer to use for precise (<1ms) timing
-extern RTOS::Time time;
+	//On-board leds
+	Pwm<GeneralPurposeTimer<uint16_t,4>> LedG;
+	Pwm<GeneralPurposeTimer<uint16_t,4>> LedO;
+	Pwm<GeneralPurposeTimer<uint16_t,4>> LedR;
+    Pwm<GeneralPurposeTimer<uint16_t,4>> LedB;
 
-extern Gpio Zigbee_RX;
-extern Gpio Zigbee_TX;
-extern Uart Zigbee_UART;
+	//Extra
+	Gpio UserButton;
 
-extern Gpio Ax12TX;
-extern Gpio Ax12RX;
-extern Gpio Ax12EN;
-extern Uart Ax12_UART;
+	//Which timer to use for precise (<1ms) timing
+	RTOS::Time time;
 
-extern Ax12 mamoutorRight;
-extern Ax12 bacLeftExternal;
-extern Ax12 bacLeftCentered;
-extern Ax12 bacLeftReservoir;
-extern Ax12 bacRightCentered;
-extern Ax12 bacRightReservoir;
-extern Ax12 ax12Broadcast;
+	Uart Ax12_UART;
 
-extern BacAFruits bacLeft;
-extern BacAFruits bacRight;
+	Ax12 mamoutorRight;
+	Ax12 bacLeftExternal;
+	Ax12 bacLeftCentered;
+	Ax12 bacLeftReservoir;
+	Ax12 bacRightCentered;
+	Ax12 bacRightReservoir;
+	Ax12 ax12Broadcast;
 
-extern Gpio External_TX;
-extern Gpio External_RX;
-extern Uart ExternalUart;
+	BacAFruits bacLeft;
+	BacAFruits bacRight;
+
+	Gpio External_TX;
+	Gpio External_RX;
+	Uart ExternalUart;
+};
+
+#endif /* PLATFORM_BOARD_H */
+

@@ -22,10 +22,11 @@
 static Shell shell;
 
 int main() {
-	UsbSerial usb;
+    Board b;
+	UsbSerial usb(b);
 
-	RTOS::Task lidar_task([&usb]() {
-		LidarNeato lidar(External_RX, ExternalUart);
+	RTOS::Task lidar_task([&usb, &b]() {
+		LidarNeato lidar(b.External_RX, b.ExternalUart);
 		while(true) {
 			lidar_neato_t lidar_packet;
 			lidar >> lidar_packet;
@@ -35,52 +36,52 @@ int main() {
 	usb << "Hello !" << endl;
 	shell.setStream(&usb, &usb);
 
-	Asserv<GeneralPurposeTimer<uint32_t,4>> asserv(Encoder1, Encoder0, Tim13, HBridge1, HBridge0);
+	Asserv<GeneralPurposeTimer<uint32_t,4>> asserv(b.Encoder1, b.Encoder0, b.Tim13, b.HBridge1, b.HBridge0);
 	//Use _ prefix as a hideme for autocompletion
-	shell << "_UserButton" << UserButton;
+	shell << "_UserButton" << b.UserButton;
 
-	shell << "LedG" << LedG;
-	shell << "LedO" << LedO;
-	shell << "LedR" << LedR;
-	shell << "LedB" << LedB;
+	shell << "LedG" << b.LedG;
+	shell << "LedO" << b.LedO;
+	shell << "LedR" << b.LedR;
+	shell << "LedB" << b.LedB;
 
-	shell << "_Prop0A" << Prop0A;
-	shell << "_Prop0B" << Prop0B;
+	shell << "_Prop0A" << b.Prop0A;
+	shell << "_Prop0B" << b.Prop0B;
 
-	shell << "_Prop1A" << Prop1A;
-	shell << "_Prop1B" << Prop1B;
+	shell << "_Prop1A" << b.Prop1A;
+	shell << "_Prop1B" << b.Prop1B;
 
-	shell << "HBridge0" << HBridge0;
-	shell << "HBridge1" << HBridge1;
+	shell << "HBridge0" << b.HBridge0;
+	shell << "HBridge1" << b.HBridge1;
 
 	shell << "Asserv" << asserv;
 
-	shell << "Encoder0" << Encoder0;
-	shell << "Encoder1" << Encoder1;
+	shell << "Encoder0" << b.Encoder0;
+	shell << "Encoder1" << b.Encoder1;
 
-	Strategie strategie(mamoutorRight, asserv);
+	Strategie strategie(b.mamoutorRight, asserv, b.time);
 	shell << "Strategie" << strategie;
 
-	shell << "Mamoutor" << mamoutorRight;
+	shell << "Mamoutor" << b.mamoutorRight;
 
-	shell << "bacLeftExternal" << bacLeftExternal;
-	shell << "bacLeftCentered" << bacLeftCentered;
-	shell << "bacLeftReservoir" << bacLeftReservoir;
+	shell << "bacLeftExternal" << b.bacLeftExternal;
+	shell << "bacLeftCentered" << b.bacLeftCentered;
+	shell << "bacLeftReservoir" << b.bacLeftReservoir;
 
-	shell << "bacRightCentered" << bacRightCentered;
-	shell << "bacRightReservoir" << bacRightReservoir;
+	shell << "bacRightCentered" << b.bacRightCentered;
+	shell << "bacRightReservoir" << b.bacRightReservoir;
 
-	shell << "bacRight" << bacRight;
-	shell << "bacLeft" << bacLeft;
+	shell << "bacRight" << b.bacRight;
+	shell << "bacLeft" << b.bacLeft;
 
-	shell << "Ax12" << ax12Broadcast;
+	shell << "Ax12" << b.ax12Broadcast;
 
-	shell.add([&asserv/*,&mamoutor*/](Stack& s) {
+	shell.add([&asserv, &b/*,&mamoutor*/](Stack& s) {
 		(void)s;
 		asserv.reset();
 		//mamoutor.disable();
-		Encoder0.setValue(0);
-		Encoder1.setValue(0);
+		b.Encoder0.setValue(0);
+		b.Encoder1.setValue(0);
 	}, "reset");
 
 	shell.add([&usb](Stack& s) {

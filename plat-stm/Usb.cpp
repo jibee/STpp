@@ -4,7 +4,7 @@
 #include <Usb.h>
 #include <Log.h>
 #include <Exti.h>
-
+#include <STM32F4.hpp>
 
 extern "C" {
 #include <usb_defines.h>
@@ -34,6 +34,9 @@ extern "C" {
 
 using namespace Platform;
 
+Gpio* vbus_en;
+Timer* uTimer;
+
 void USB_OTG_BSP_Init(void) {
 	RCC->AHB2ENR |= 1<<7;
 }
@@ -46,7 +49,7 @@ void USB_OTG_BSP_EnableInterrupt(void) {
 
 void USB_OTG_BSP_DriveVBUS(uint32_t speed, uint8_t state) {
 	(void)speed;
-	USB_Vbus_en.setState(state == 0);
+	vbus_en->setState(state == 0);
 }
 
 void USB_OTG_BSP_ConfigVBUS(uint32_t speed) {
@@ -57,10 +60,10 @@ void USB_OTG_BSP_ConfigVBUS(uint32_t speed) {
 void USB_OTG_BSP_uDelay (const uint32_t usec)
 {
 #if 1
-	Tim6.setAutoReload(usec*42);
-	Tim6.enable();
-	Tim6.wait();
-	Tim6.disable();
+    uTimer->setAutoReload(usec*42);
+	uTimer->enable();
+	uTimer->wait();
+	uTimer->disable();
 #else
   uint32_t count = 0;
   const uint32_t utime = (120 * usec / 7);
@@ -131,44 +134,44 @@ USBD_Usr_cb_TypeDef USR_cb =
 };
 
 static bool occupied;
-Usb::Usb() {
+Usb::Usb(STM32F4_WithUSB& board) {
 	if(occupied)
 		while(1);
 
 	occupied = true;
-
-	Tim6
-		.setPrescaler(1)
+    // TODO perhaps specify this externally too?
+    uTimer = &(board.Tim6);
+	uTimer->setPrescaler(1)
 		.setAutoReloadBuffered(true)
 		.setOneShot(true);
 
-	USB_Vbus_en
+	board.USB_Vbus_en
 		.setSpeed(Gpio::SPEED_100MHz)
 		.setPushPull()
 		.setFunction(Gpio::GPIO)
 		.setDirection(Gpio::OUTPUT)
 		//Enforce vbus off
 		.setState(true);
-
-	USB_DM
+    vbus_en = &(board.USB_Vbus_en);
+	board.USB_DM
 		.setSpeed(Gpio::SPEED_100MHz)
 		.setAlternate(Gpio::OTG_FS_HS);
-	USB_DP
+	board.USB_DP
 		.setSpeed(Gpio::SPEED_100MHz)
 		.setAlternate(Gpio::OTG_FS_HS);
 
-	USB_ID
+	board.USB_ID
 		.setOpenDrain()
 		.setFunction(Gpio::ALTERNATE)
 		.setDirection(Gpio::OUTPUT)
 		.setResistor(Gpio::PULL_UP)
 		.setAlternate(Gpio::OTG_FS_HS);
 
-	if(USB_Vbus_det)
+	if(board.USB_Vbus_det)
 		log << "Found vbus, we're (probably) guest" << endl;
-	else if(!USB_ID) {
+	else if(!board.USB_ID) {
 		log << "Found a USB OTG A, we're host" << endl;
-		USB_Vbus_en = false;
+		board.USB_Vbus_en = false;
 		log << "Enabled vbus" << endl;
 	} else {
 		log << "We are currently disconnected..." << endl;

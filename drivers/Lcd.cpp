@@ -1,5 +1,4 @@
 #include <Lcd.h>
-#include <Board.h>
 
 LcdLine::LcdLine() {
 	lcd = NULL;
@@ -35,9 +34,9 @@ LcdLine& LcdLine::endl() {
 	return *this;
 }
 
-Lcd::Lcd(Gpio RS, Gpio E, Gpio DB7, Gpio DB6, Gpio DB5, Gpio DB4) :
+Lcd::Lcd(RTOS::Time& microTimer, Gpio RS, Gpio E, Gpio DB7, Gpio DB6, Gpio DB5, Gpio DB4) :
 	RS(RS), E(E), DB7(DB7), DB6(DB6), DB5(DB5), DB4(DB4),
-	is_4bit(true) {
+	is_4bit(true), time(microTimer) {
 	init();
 	clearDisplay();
 	displaySet(true, true, true);

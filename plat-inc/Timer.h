@@ -4,6 +4,10 @@
 #include <Gpio.h>
 #include <stm32f4xx.h>
 
+#ifndef __attribute_deprecated__
+#define __attribute_deprecated__ __attribute((deprecated))
+#endif
+
 namespace Platform
 {
 /** hardware timer / counter
@@ -480,40 +484,5 @@ class AdvancedControlTimer: public GeneralPurposeTimer<uint16_t, 4>
 	}
 };
 
-
-
-/** @name Static Timer definitions.
-*
-* */
-///@{
-/** Timer1 */
-extern AdvancedControlTimer Tim1;
-/** Timer2 */
-extern GeneralPurposeTimer<uint32_t,4> Tim2;
-/** Timer3 */
-extern GeneralPurposeTimer<uint16_t,4> Tim3;
-/** Timer4 */
-extern GeneralPurposeTimer<uint16_t,4> Tim4;
-/** Timer5 */
-extern GeneralPurposeTimer<uint32_t,4> Tim5;
-/** Timer6 */
-extern Timer Tim6;
-/** Timer7 */
-extern Timer Tim7;
-/** Timer8 */
-extern AdvancedControlTimer Tim8;
-/** Timer9 */
-extern GeneralPurposeTimer<uint16_t,2> Tim9;
-/** Timer10 */
-extern GeneralPurposeTimer<uint16_t,1> Tim10;
-/** Timer11 */
-extern GeneralPurposeTimer<uint16_t,1> Tim11;
-/** Timer12 */
-extern GeneralPurposeTimer<uint16_t,2> Tim12;
-/** Timer13 */
-extern GeneralPurposeTimer<uint16_t,1> Tim13;
-/** Timer14 */
-extern GeneralPurposeTimer<uint16_t,1> Tim14;
-///@}
 }
 #endif /* _TIMER_H */

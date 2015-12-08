@@ -5,8 +5,8 @@ using namespace Platform;
 
 #define me ((volatile GPIO_TypeDef*)(this->port->base))
 
-Gpio::Gpio(GpioPort* port, int)
-	: port(port), number() {
+Gpio::Gpio(GpioPort* port, int n)
+	: port(port), number(n) {
 	function = GPIO;
 	direction = INPUT;
 }

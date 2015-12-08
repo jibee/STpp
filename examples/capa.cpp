@@ -9,26 +9,27 @@
 #include <Uart.h>
 #include <Usb.h>
 #include <Watchdog.h>
+#include <Board.h>
 
-Capa capa;
 
 int main() {
 	log << "startup" << endl;
-
+    Board b;
+    Capa capa(b.time, b.Tim7);
 	capa
-		.add(GpioD[0])
-		.add(GpioD[1])
-		.add(GpioD[2]);
+		.add(b.GpioD[0])
+		.add(b.GpioD[1])
+		.add(b.GpioD[2]);
 
 	capa();
 
 	Mean slow[3]={Mean(4), Mean(4), Mean(4)};
 	Mean fast[3]={Mean(1), Mean(1), Mean(1)};
 
-	LedO.setDutyCycle(0);
-	LedG.setDutyCycle(0);
-	LedB.setDutyCycle(0);
-	LedR.setDutyCycle(0);
+	b.LedO.setDutyCycle(0);
+	b.LedG.setDutyCycle(0);
+	b.LedB.setDutyCycle(0);
+	b.LedR.setDutyCycle(0);
 	int len[3] = {0, 0, 0};
 	while(1) {
 
@@ -39,9 +40,9 @@ int main() {
 			slow[i]+=capa[i];
 			fast[i]+=capa[i];
 		}
-		LedB.setDutyCycle(0);
+		b.LedB.setDutyCycle(0);
 		if(capa[1] > 14800)
-			LedB.setDutyCycle(100);
+			b.LedB.setDutyCycle(100);
 
 
 		for(i=0;i<3;++i) {
@@ -50,13 +51,13 @@ int main() {
 			if(d>15) {
 				switch(i) {
 					case 0:
-						LedG.setDutyCycle(100);
+						b.LedG.setDutyCycle(100);
 						break;
 					case 1:
-						//LedO.setDutyCycle(100);
+						//b.LedO.setDutyCycle(100);
 						break;
 					case 2:
-						//LedR.setDutyCycle(100);
+						//b.LedR.setDutyCycle(100);
 						break;
 				};
 			}
@@ -69,13 +70,13 @@ int main() {
 				log << " Instant " << capa[i] << endl;
 				switch(i) {
 					case 0:
-						LedG.setDutyCycle(0);
+						b.LedG.setDutyCycle(0);
 						break;
 					case 1:
 						//LedO.setDutyCycle(0);
 						break;
 					case 2:
-						LedR.setDutyCycle(0);
+						b.LedR.setDutyCycle(0);
 						break;
 				};
 			} else {

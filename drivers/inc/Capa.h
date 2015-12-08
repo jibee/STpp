@@ -26,8 +26,10 @@ class Capa {
 		int values[8];
 		void prepare(int);
 		int offset[8];
+		RTOS::Time& time;
+		Platform::Timer& tim7;
 	public:
-		Capa();
+		Capa(RTOS::Time& highresTime, Platform::Timer& hwTimer);
 		Capa& add(Gpio);
 
 		//Pre load capacitors

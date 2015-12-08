@@ -61,7 +61,7 @@ class Gpio {
 	 * @param f type of pin function - GPIO or ALTERNATE
 	 */
 	Gpio& setFunction(Gpio::Function f);
-	/** When Direction=INPUT and Function=GPIO, sets the output to the given value
+	/** When Direction=OUTPUT and Function=GPIO, sets the output to the given value
 	 *
 	 * @param value true for a high level, false for a low level
 	 */
@@ -164,29 +164,6 @@ class GpioPort {
 	int getPortNumber();
 };
 
-/** @name Static GPIO ports definitions.
-*
-* */
-///@{
-/** GPIO Port A */
-extern GpioPort GpioA;
-/** GPIO Port B */
-extern GpioPort GpioB;
-/** GPIO Port B */
-extern GpioPort GpioC;
-/** GPIO Port D */
-extern GpioPort GpioD;
-/** GPIO Port E */
-extern GpioPort GpioE;
-/** GPIO Port F */
-extern GpioPort GpioF;
-/** GPIO Port G */
-extern GpioPort GpioG;
-/** GPIO Port H */
-extern GpioPort GpioH;
-/** GPIO Port I */
-extern GpioPort GpioI;
-///@}
 inline bool Gpio::getState() { return !!(port->base->IDR&(1<<number)); };
 }
 #endif /* _GPIO_H */

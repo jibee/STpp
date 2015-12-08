@@ -3,6 +3,7 @@
 #include <Gpio.h>
 #include <Lock.h>
 #include <OStream.h>
+#include <Board.h>
 
 class Lcd;
 class LcdLine : public OStream {
@@ -31,8 +32,9 @@ class Lcd {
 		Platform::Gpio RS, E, DB7, DB6, DB5, DB4;
 		bool is_4bit;
 		RTOS::Mutex lock;
+        RTOS::Time& time;
 	public:
-		Lcd(Platform::Gpio RS, Platform::Gpio E, Platform::Gpio DB7, Platform::Gpio DB6, Platform::Gpio DB5, Platform::Gpio DB4);
+		Lcd(RTOS::Time& microTimer, Platform::Gpio RS, Platform::Gpio E, Platform::Gpio DB7, Platform::Gpio DB6, Platform::Gpio DB5, Platform::Gpio DB4);
 		// 0 0 0 0 0 0 0 1
 		Lcd& clearDisplay();
 		// 0 0 0 0 0 0 1 *

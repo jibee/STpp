@@ -1,8 +1,8 @@
 #include "Strategie.h"
 #include <Board.h>
 
-Strategie::Strategie(Ax12& Mamoutor, _AsservBase& a) :
-	mamoutor_servo(Mamoutor), asserv(a) {
+Strategie::Strategie(Ax12& Mamoutor, _AsservBase& a, RTOS::Time& t) :
+	mamoutor_servo(Mamoutor), asserv(a), time(t) {
 	
 #if 1
 	//If big robot

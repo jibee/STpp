@@ -2,7 +2,7 @@
 
 namespace Platform
 {
-
+#if 0
     AdvancedControlTimer Tim1(TIM1, 1);
     GeneralPurposeTimer<uint32_t,4> Tim2(TIM2, 2);
     GeneralPurposeTimer<uint16_t,4> Tim3(TIM3, 3);
@@ -17,4 +17,5 @@ namespace Platform
     GeneralPurposeTimer<uint16_t,2> Tim12(TIM12, 12);
     GeneralPurposeTimer<uint16_t,1> Tim13(TIM13, 13);
     GeneralPurposeTimer<uint16_t,1> Tim14(TIM14, 14);
+#endif
 }

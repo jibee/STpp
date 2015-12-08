@@ -2,12 +2,9 @@
 #include <Board.h>
 #include <Log.h>
 
-BacAFruits::BacAFruits(Ax12* external,
-		Ax12* centered,
-		Ax12* reservoir,
-		bool left) :
+BacAFruits::BacAFruits(Ax12* external, Ax12* centered, Ax12* reservoir, bool left, RTOS::Time& t) :
 	external(external), centered(centered),
-	reservoir(reservoir), left(left) {
+	reservoir(reservoir), left(left), time(t) {
 }
 
 BacAFruits& BacAFruits::forward() {

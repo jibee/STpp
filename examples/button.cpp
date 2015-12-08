@@ -7,18 +7,19 @@
 
 int main() {
 	bool v = false;
-	UsbSerial usb;
+    Board b;
+    UsbSerial usb(b);
 	usb << "Hello !" << endl;
-	Exti(UserButton)
+	Exti(b.UserButton)
 		.enableFalling()
 		.disableRising()
 		.setTopCB([&](int) {
 			usb << "Hello !" << endl;
-			LedR.setDutyCycle(v ? 100 : 0);
+			b.LedR.setDutyCycle(v ? 100 : 0);
 			v = !v;
 		})
 		.enableIRQ();
 
 	while(1)
-		time.msleep(10000);
+		b.time.msleep(10000);
 }

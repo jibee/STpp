@@ -12,7 +12,7 @@ class UsbSerial : public OStream, public IStream {
 		Usb u;
 		RTOS::Mutex lock;
 	public:
-		UsbSerial();
+		UsbSerial(Platform::STM32F4_WithUSB& board);
 		~UsbSerial();
 		//OStream
 		virtual UsbSerial& put(char);

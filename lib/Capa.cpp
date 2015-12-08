@@ -9,9 +9,10 @@
 #include <Usb.h>
 #include <Time.h>
 #include <Watchdog.h>
+#include <Board.h>
 
-Capa::Capa() : n(0) {
-	Tim7
+Capa::Capa(RTOS::Time& highresTime, Platform::Timer& hwTimer) : n(0), time(highresTime), tim7(hwTimer) {
+	tim7
 		.setPrescaler(0x0)
 		.setAutoReload(20000)
 		.setCounter(0x0)
@@ -27,7 +28,7 @@ Capa& Capa::add(Gpio g) {
 	Exti(g)
 		.enableFalling()
 		.setTopCB([=](int) {
-			values[i] = Tim7.getCounter();
+			values[i] = tim7.getCounter();
 			prepare(i);
 		})
 		.enableIRQ();
@@ -53,7 +54,7 @@ Capa& Capa::prepare() {
 
 Capa& Capa::measure() {
 	int i;
-	Tim7
+	tim7
 		.setCounter(0)
 		.setOneShot(true)
 		.update()
@@ -65,10 +66,10 @@ Capa& Capa::measure() {
 			.setDirection(Gpio::INPUT)
 			.setResistor(Gpio::NONE);
 		values[i] = 0;
-		offset[i] = Tim7.getCounter();
+		offset[i] = tim7.getCounter();
 	}
 
-	while(Tim7.enabled()) {
+	while(tim7.enabled()) {
 		int i;
 		int failed = 0;
 		for(i=0;i<n;++i) {
@@ -78,10 +79,10 @@ Capa& Capa::measure() {
 		if(!failed)
 			break;
 	}
-	if(!Tim7.enabled())
+	if(!tim7.enabled())
 		log << "Timed out" << endl;
 
-	Tim7
+	tim7
 		.setCounter(0)
 		.disable();
 	for(i=0;i<n;++i) {
