@@ -203,14 +203,14 @@ void Ax12::getMsg() {
 	for(i=0 ; i< (msg[3]+4) ; ++i) {
 		msg[3]&=~0x80;
 		msg[i] = uart.waitForNext();
-		log << (int)msg[i] << ":";
+		Log::log << (int)msg[i] << ":";
 	}
 	int j;
 	char checksum = 0;
 	for(j=2;j<(i-1);++j)
 		checksum+=msg[j];
 	checksum=~checksum;
-	log << "end (found " << (int)checksum << endl;
+	Log::log << "end (found " << (int)checksum << endl;
 	if(g)
 		*g = false;
 }

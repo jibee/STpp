@@ -15,9 +15,9 @@ int main() {
 		.setOneShot(true)
 		.enable();
 
-	log << "Waiting for end of timer 4" << endl;
+	Log::log << "Waiting for end of timer 4" << endl;
 	while(b.Tim4);
-	log << "Timer4 done" << endl;
+	Log::log << "Timer4 done" << endl;
 	while(1)
 		b.time.msleep(2000);
 }

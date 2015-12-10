@@ -12,13 +12,13 @@ RPC& RPC::setStream(IStream* in, OStream* out) {
 }
 
 void RPC::waitIngoing() {
-	log << "Ingoing thread started" << endl;
+	Log::log << "Ingoing thread started" << endl;
 	while(true) {
 		do {
 			in->wait();
-			log << "Received something" << endl;
+			Log::log << "Received something" << endl;
 		} while(!running.tryTake());
-		log << "Notify main thread" << endl;
+		Log::log << "Notify main thread" << endl;
 		ingoing = true;
 		signalIncoming.give();
 	}
@@ -28,7 +28,7 @@ void RPC::handleIncoming() {
 	unsigned char c;
 	unsigned char id;
 
-	log << "Received packet" << endl;
+	Log::log << "Received packet" << endl;
 
 	*in >> c;
 	//Not a start of frame
@@ -78,15 +78,15 @@ void RPC::runLogic() {
 		running.give();
 		ingoing = false;
 
-		log << "Waiting for signal" << endl;
+		Log::log << "Waiting for signal" << endl;
 		signalIncoming.take();
 
-		log << "Got a signal" << endl;
+		Log::log << "Got a signal" << endl;
 		if(ingoing) {
-			log << "Incoming signal" << endl;
+			Log::log << "Incoming signal" << endl;
 			handleIncoming();
 		} else {
-			log << "Outgoing signal" << endl;
+			Log::log << "Outgoing signal" << endl;
 			handleOutgoing();
 		}
 	}

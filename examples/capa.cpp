@@ -13,7 +13,7 @@
 
 
 int main() {
-	log << "startup" << endl;
+    Log::log << "startup" << endl;
     Board b;
     Capa capa(b.time, b.Tim7);
 	capa
@@ -63,11 +63,11 @@ int main() {
 			}
 			if(d<-20) {
 				++len[i];
-				log << "Fast " << fast[i];
-				log << " Slow " << slow[i];
-				log << " Delta " << d;
-				log << " Len " << len[i];
-				log << " Instant " << capa[i] << endl;
+				Log::log << "Fast " << fast[i];
+				Log::log << " Slow " << slow[i];
+				Log::log << " Delta " << d;
+				Log::log << " Len " << len[i];
+				Log::log << " Instant " << capa[i] << endl;
 				switch(i) {
 					case 0:
 						b.LedG.setDutyCycle(0);
@@ -81,11 +81,11 @@ int main() {
 				};
 			} else {
 				if(len[i]) {
-					log << "Fast " << fast[i];
-					log << " Slow " << slow[i];
-					log << " Delta " << d;
-					log << " Len " << len[i];
-					log << " Instant " << capa[i] << endl;
+					Log::log << "Fast " << fast[i];
+					Log::log << " Slow " << slow[i];
+					Log::log << " Delta " << d;
+					Log::log << " Len " << len[i];
+					Log::log << " Instant " << capa[i] << endl;
 				}
 				len[i] = 0;
 			}

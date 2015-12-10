@@ -1,22 +1,25 @@
 #include "Log.h"
 
+Log Log::log;
+
 Log& Log::put(char c) {
-	log[line][position]=c;
+	m_log[line][position]=c;
 	position++;
 	return *this;
 }
 
 Log& Log::endl() {
-	log[line][position]=0;
+	m_log[line][position]=0;
 	line++;
-	line%=sizeof(log)/sizeof(log[0]);
+	line%=sizeof(m_log)/sizeof(m_log[0]);
 	position = 0;
 	return *this;
 }
 
 void Log::dump(OStream& o) {
-	for(unsigned i=0; i<sizeof(log)/sizeof(*log); ++i) {
-		unsigned p = (position + i+1) % sizeof(log)/sizeof(*log);
-		o << (char*)log[p] << ::endl;
+	for(unsigned i=0; i<sizeof(m_log)/sizeof(*m_log); ++i) {
+		unsigned p = (position + i+1) % sizeof(m_log)/sizeof(*m_log);
+		o << (char*)m_log[p] << ::endl;
 	}
 }
+

@@ -10,6 +10,10 @@ define reload-code
 	continue
 end
 
+define show_log
+	print Log::log.m_log
+end
+
 define reset_context
 	set $r0=(*(uint32_t*)($sp))
 	set $r1=(*(uint32_t*)($sp+4))

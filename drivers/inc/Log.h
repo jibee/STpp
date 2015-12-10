@@ -4,14 +4,14 @@
 
 class Log : public OStream {
 	private:
-		volatile char log[32][128];
+		volatile char m_log[32][128];
 		int line;
 		int position;
 	public:
+		static Log log;
 		virtual Log& put(char);
 		virtual Log& endl();
 		void dump(OStream& o);
 };
 
-extern Log log;
 #endif /* _LOG_H */

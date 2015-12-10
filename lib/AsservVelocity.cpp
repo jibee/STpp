@@ -89,7 +89,7 @@ void VelocityAccel::compute(int targetDist, int targetAngle) {
 	else
 		intAngle = getDeltaAngle() + intAngle*255/256;
 	if( (intDist * getDeltaDist()) < 0) {
-		log << "Remise a 0 de l'integrale" <<endl;
+		Log::log << "Remise a 0 de l'integrale" <<endl;
 		intDist = 0;
 	} else
 		intDist = getDeltaDist() + intDist*255/256;

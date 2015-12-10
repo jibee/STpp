@@ -251,9 +251,9 @@ Asserv<TIMER_TYPE>::Asserv(IncrementalEncoder& _left, IncrementalEncoder& _right
             //150ms
             if(beenZero > 150) {
                 if(dateStart) {
-                    log << "At " << date << ", we finished command from " << dateStart << endl;
+                    Log::log << "At " << date << ", we finished command from " << dateStart << endl;
                     int res = date - dateStart;
-                    log << "That makes time of " << res/1000 << "s" << res%1000 << "ms" << endl;
+                    Log::log << "That makes time of " << res/1000 << "s" << res%1000 << "ms" << endl;
                     dateStart = 0;
                     waiting = false;
                 }
@@ -267,11 +267,11 @@ Asserv<TIMER_TYPE>::Asserv(IncrementalEncoder& _left, IncrementalEncoder& _right
                 if(throttle > 0) {
                     throttle -= 10;
                 }
-                log << "Throttle at " << throttle << endl;
-                log << " Accel = " << infos.getAccelDist() << endl;
+                Log::log << "Throttle at " << throttle << endl;
+                Log::log << " Accel = " << infos.getAccelDist() << endl;
             } else {
                 if(throttle < 100) {
-                    log << "Throttle at " << throttle << endl;
+                    Log::log << "Throttle at " << throttle << endl;
                     throttle += 10;
                 }
             }

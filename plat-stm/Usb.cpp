@@ -93,32 +93,32 @@ void USB_OTG_BSP_TimerIRQ (void)
 
 
 void USBD_USR_Init() {
-	log << "USBD initing" << endl;
+	Log::log << "USBD initing" << endl;
 }
 
 void USBD_USR_DeviceReset(uint8_t speed ) {
 	(void)speed;
-	log << "USBD resting" << endl;
+	Log::log << "USBD resting" << endl;
 }
 
 void USBD_USR_DeviceConfigured (void) {
-	log << "HID interface started" << endl;
+	Log::log << "HID interface started" << endl;
 }
 
 void USBD_USR_DeviceConnected (void) {
-	log << "HID interface starting" << endl;
+	Log::log << "HID interface starting" << endl;
 }
 
 void USBD_USR_DeviceDisconnected (void) {
-	log << "HID interface stopped" << endl;
+	Log::log << "HID interface stopped" << endl;
 }
 
 void USBD_USR_DeviceSuspended() {
-	log << "USB suspend" << endl;
+	Log::log << "USB suspend" << endl;
 }
 
 void USBD_USR_DeviceResumed() {
-	log << "Device woke up" << endl;
+	Log::log << "Device woke up" << endl;
 }
 
 USBD_Usr_cb_TypeDef USR_cb =
@@ -168,12 +168,12 @@ Usb::Usb(STM32F4_WithUSB& board) {
 		.setAlternate(Gpio::OTG_FS_HS);
 
 	if(board.USB_Vbus_det)
-		log << "Found vbus, we're (probably) guest" << endl;
+		Log::log << "Found vbus, we're (probably) guest" << endl;
 	else if(!board.USB_ID) {
-		log << "Found a USB OTG A, we're host" << endl;
+		Log::log << "Found a USB OTG A, we're host" << endl;
 		board.USB_Vbus_en = false;
-		log << "Enabled vbus" << endl;
+		Log::log << "Enabled vbus" << endl;
 	} else {
-		log << "We are currently disconnected..." << endl;
+		Log::log << "We are currently disconnected..." << endl;
 	}
 }

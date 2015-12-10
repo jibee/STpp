@@ -81,7 +81,7 @@ IRRemote::IRRemote(Timer& t, Gpio& g) :
 						word = tmpWord;
 						dataAvailable.give();
 					}
-					log << "[IR] Got " << (int)tmpWord << endl;
+					Log::log << "[IR] Got " << (int)tmpWord << endl;
 				}
 				tmpWord = 0;
 			}

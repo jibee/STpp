@@ -4,7 +4,7 @@
 #include <Uart.h>
 
 int main() {
-	log << "startup" << endl;
+    Log::log << "startup" << endl;
 
     Board board;
     

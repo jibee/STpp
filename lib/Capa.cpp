@@ -80,7 +80,7 @@ Capa& Capa::measure() {
 			break;
 	}
 	if(!tim7.enabled())
-		log << "Timed out" << endl;
+		Log::log << "Timed out" << endl;
 
 	tim7
 		.setCounter(0)
