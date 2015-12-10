@@ -84,8 +84,6 @@ all: $(EXECS)
 doc:
 	doxygen
 
-lib/static.o: lib/static.cpp lib/Board.static.h
-
 .SECONDARY: $(LIB_OBJS) $(FREERTOS_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS) $(EXECS)
 
 lib/%.o: lib/%.cpp $(LIB_INCS) $(PLAT_INCS) $(DRIVER_INCS)
