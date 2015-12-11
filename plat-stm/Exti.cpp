@@ -1,5 +1,4 @@
 #include <stm32f4xx.h>
-#include "Board.h"
 #include "Exti.h"
 #include "Irq.h"
 #include "Log.h"

@@ -1,9 +1,10 @@
 #include <Ax12.h>
-#include <Board.h>
 #include <Log.h>
 
 static char buf[16] __attribute((section("dma")));
 static char *bufPos = buf;
+using namespace Platform;
+
 Ax12::Ax12(RTOS::Time& microTimer, Gpio g, Uart u, int i) :
 	time(microTimer), uart(u), id(i), g(0) {
 

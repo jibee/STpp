@@ -1,5 +1,7 @@
 #include <Lcd.h>
 
+using namespace Platform;
+
 LcdLine::LcdLine() {
 	lcd = NULL;
 	line = -1;

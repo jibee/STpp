@@ -1,10 +1,8 @@
 #include <stm32f4xx.h>
-#include <Board.h>
 #include <Irq.h>
 #include <Usb.h>
 #include <Log.h>
 #include <Exti.h>
-#include <STM32F4.hpp>
 
 extern "C" {
 #include <usb_defines.h>
