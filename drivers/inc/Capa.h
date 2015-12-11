@@ -1,6 +1,9 @@
 #ifndef _CAPA_H
 #define _CAPA_H
 
+#include <Gpio.h>
+#include <Time.h>
+
 /** 
 @brief Measure the capacitance of a load connected between a given GPIO and
 the ground.
@@ -20,31 +23,31 @@ insulator permeability and thus the capacitor value.
 This class can monitor at most 8 inputs at the same time.
 */
 class Capa {
-	private:
-		int n;
-		Gpio pins[8];
-		int values[8];
-		void prepare(int);
-		int offset[8];
-		RTOS::Time& time;
-		Platform::Timer& tim7;
-	public:
-		Capa(RTOS::Time& highresTime, Platform::Timer& hwTimer);
-		Capa& add(Gpio);
+    private:
+	int n;
+	Platform::Gpio pins[8];
+	int values[8];
+	void prepare(int);
+	int offset[8];
+	RTOS::Time& time;
+	Platform::Timer& tim7;
+    public:
+	Capa(RTOS::Time& highresTime, Platform::Timer& hwTimer);
+	Capa& add(Platform::Gpio);
 
-		//Pre load capacitors
-		Capa& prepare();
-		//Actually do the measurement
-		Capa& measure();
-		Capa& update();
+	//Pre load capacitors
+	Capa& prepare();
+	//Actually do the measurement
+	Capa& measure();
+	Capa& update();
 
-		//Use as a function to update
-		inline void operator()() {
-			update();
-		}
-		inline int operator[](int i) {
-			return values[i];
-		}
+	//Use as a function to update
+	inline void operator()() {
+	    update();
+	}
+	inline int operator[](int i) {
+	    return values[i];
+	}
 };
 
 #endif /* _CAPA_H */
