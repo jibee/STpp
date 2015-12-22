@@ -17,18 +17,18 @@ using namespace Platform;
 class Board: public DiscoveryBoard
 {
     private:
-    DmaStream ZigbeeUartDma;
-public:
-    Gpio g_RLed1;
-    Gpio g_RLed2;
-    Gpio g_RLed3;
-    Gpio g_RLed4;
-    Gpio Ax12Tx;
-    Gpio Ax12En;
-    Gpio Ax12Rx;
-private:
-    DmaStream Ax12UartDma;
-    DmaStream ExternalUartDma;
+	DmaStream ZigbeeUartDma;
+    public:
+	Gpio g_RLed1;
+	Gpio g_RLed2;
+	Gpio g_RLed3;
+	Gpio g_RLed4;
+	Gpio Ax12Tx;
+	Gpio Ax12En;
+	Gpio Ax12Rx;
+    private:
+	DmaStream Ax12UartDma;
+	DmaStream ExternalUartDma;
     public:
 	Board();
 
@@ -61,16 +61,16 @@ private:
 	Gpio Prop3B;
 	HBridgeST<AdvancedControlTimer> Hbridge3;
 
-    Gpio Zigbee_RX;
-    Gpio Zigbee_TX;
-    Uart Zigbee_UART;
+	Gpio Zigbee_RX;
+	Gpio Zigbee_TX;
+	Uart Zigbee_UART;
 
 
 	//On-board leds
 	Pwm<GeneralPurposeTimer<uint16_t,4>> LedG;
 	Pwm<GeneralPurposeTimer<uint16_t,4>> LedO;
 	Pwm<GeneralPurposeTimer<uint16_t,4>> LedR;
-    Pwm<GeneralPurposeTimer<uint16_t,4>> LedB;
+	Pwm<GeneralPurposeTimer<uint16_t,4>> LedB;
 
 	//Extra
 	Gpio UserButton;

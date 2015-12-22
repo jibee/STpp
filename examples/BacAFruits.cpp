@@ -3,6 +3,10 @@
 #include <Ax12.h>
 #include <Uart.h>
 
+/**
+ *
+ * TODO move into a dedicated example subfolder
+ * */
 int main() {
 	log << "startup" << endl;
 

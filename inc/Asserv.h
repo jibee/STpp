@@ -6,8 +6,6 @@
 #include <Timer.h>
 #include <Log.h>
 
-class Shell;
-
 class VelocityAccelPerEncoderCompute {
     private:
 	int last;

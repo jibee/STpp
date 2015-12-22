@@ -1,10 +1,5 @@
 #include "Board.h"
-#include "Led.h"
-#include "Pwm.h"
-#include "HBridgeST.h"
-#include "IncrementalEncoder.h"
-#include "Uart.h"
-#include "Ax12.h"
+
 using namespace Platform;
 
 Board::Board(): DiscoveryBoard(),

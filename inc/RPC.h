@@ -1,10 +1,10 @@
 #ifndef _RPC_H
 #define _RPC_H
 
+#include <tr1/functional>
 #include <IStream.h>
 #include <OStream.h>
 #include <Lock.h>
-#include <tr1/functional>
 
 class RPC {
 	private:

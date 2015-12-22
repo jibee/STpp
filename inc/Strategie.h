@@ -2,6 +2,7 @@
 #define _STRATEGIE_H
 #include <Asserv.h>
 #include <Ax12.h>
+#include <Time.h>
 
 class Strategie {
 	private:

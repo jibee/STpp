@@ -1,13 +1,7 @@
 #include <tr1/functional>
 #include <Capa.h>
-#include <Gpio.h>
 #include <Log.h>
-#include <Ax12.h>
 #include <Exti.h>
-#include <Uart.h>
-#include <Usb.h>
-#include <Time.h>
-#include <Watchdog.h>
 
 using namespace Platform;
 
