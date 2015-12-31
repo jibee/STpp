@@ -14,6 +14,14 @@
 
 using namespace Platform;
 
+/** 
+ * Definition of the peripherals for a "cherry picker" robot.
+ * 
+ * This is specific to a robotics contest held in 20??
+ * 
+ * @todo rename to CherryPickerBoard ?
+ * 
+ * */
 class Board: public DiscoveryBoard
 {
     private:
