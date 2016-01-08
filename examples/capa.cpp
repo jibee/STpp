@@ -1,7 +1,7 @@
 #include <tr1/functional>
 
 #include <Ax12.h>
-#include <Board.h>
+#include <CherryPickerBoard.h>
 #include <Capa.h>
 #include <Exti.h>
 #include <Log.h>
@@ -13,7 +13,7 @@
 
 int main() {
     Log::log << "startup" << endl;
-    Board b;
+    CherryPickerBoard b;
     Capa capa(b.time, b.Tim7);
 	capa
 		.add(b.GpioD[0])

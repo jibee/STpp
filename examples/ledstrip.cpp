@@ -1,17 +1,21 @@
-#include <Board.h>
+#include <STM32F4.hpp>
+#include <Time.h>
 #include <LedStrip.h>
+#include <Dma.h>
 
 int main() {
-	auto ledStripG = GpioB[5];
-	DmaStream dma(2, 3, 3);
-	auto ledStripS = Spi(1, &dma);
+	Platform::STM32F4 b;
+	RTOS::Time time(b.Tim7);
+	auto ledStripG = b.GpioB[5];
+	Platform::DmaStream dma(Platform::DmaStream::DMAController2, Platform::DmaStream::S3, Platform::DmaStream::C3);
+	auto ledStripS = Platform::Spi(1, &dma);
 	//auto ledStripS = Spi(1);
 	LedStrip ledStrip(ledStripS);
 
 	ledStripG
 		.setPushPull()
-		.setDirection(Gpio::OUTPUT)
-		.setSpeed(Gpio::SPEED_100MHz);
+		.setDirection(Platform::Gpio::OUTPUT)
+		.setSpeed(Platform::Gpio::SPEED_100MHz);
 
 	ledStripG = false;
 	time.msleep(2);

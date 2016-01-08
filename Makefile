@@ -60,7 +60,7 @@ CXX=$(PREFIX)gcc
 LD=$(PREFIX)ld
 AS=$(PREFIX)as
 
-TARGETS:=led capa ax12 button timer shell
+TARGETS:=led capa ax12 button timer shell BacAFruitsBT BacAFruits dumpLcd incrementalEncoder irremote lcd ledstrip lidar motor nfc remote rotaryCounter srf02
 EXECS:=$(addprefix examples/,$(TARGETS))
 ifeq ($(PLAT),stm)
 EXECS:=$(addsuffix .flash,$(EXECS)) $(addsuffix .ram,$(EXECS))

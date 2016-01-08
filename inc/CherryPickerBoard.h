@@ -19,10 +19,8 @@ using namespace Platform;
  * 
  * This is specific to a robotics contest held in 20??
  * 
- * @todo rename to CherryPickerBoard ?
- * 
  * */
-class Board: public DiscoveryBoard
+class CherryPickerBoard: public DiscoveryBoard
 {
     private:
 	DmaStream ZigbeeUartDma;
@@ -38,7 +36,7 @@ class Board: public DiscoveryBoard
 	DmaStream Ax12UartDma;
 	DmaStream ExternalUartDma;
     public:
-	Board();
+	CherryPickerBoard();
 
 	// Motor control
 	Gpio Prop0_PWM;
@@ -80,8 +78,6 @@ class Board: public DiscoveryBoard
 	Pwm<GeneralPurposeTimer<uint16_t,4>> LedR;
 	Pwm<GeneralPurposeTimer<uint16_t,4>> LedB;
 
-	//Extra
-	Gpio UserButton;
 
 	//Which timer to use for precise (<1ms) timing
 	RTOS::Time time;

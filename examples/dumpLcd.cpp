@@ -1,4 +1,4 @@
-#include <Board.h>
+#include <CherryPickerBoard.h>
 #include <Bluetooth.h>
 #include <Gpio.h>
 #include <Exti.h>
@@ -53,23 +53,24 @@ int digit_read(int low, int high) {
 }
 
 int main() {
+	CherryPickerBoard b;
 	//Not actually a clock
 	//But a non-displayed digit that is used as a clock
-	auto clk = GpioB[5];
-	auto data9 = GpioB[9];
-	auto data8 = GpioB[8];
-	auto data7 = GpioB[7];
-	auto data6 = GpioB[6];
+	auto clk = b.GpioB[5];
+	auto data9 = b.GpioB[9];
+	auto data8 = b.GpioB[8];
+	auto data7 = b.GpioB[7];
+	auto data6 = b.GpioB[6];
+	auto Pwm1_g = b.GpioA[1];
+	Pwm<GeneralPurposeTimer<uint32_t, 4>> pompe1(Pwm1_g, b.Tim2, 2);
 
-	auto Pwm1_g = GpioA[1];
-	Pwm pompe1(Pwm1_g, Tim2, 2);
+	auto Pwm2_g = b.GpioA[2];
+	Pwm<GeneralPurposeTimer<uint32_t, 4>> pompe2(Pwm2_g, b.Tim2, 3);
 
-	auto Pwm2_g = GpioA[2];
-	Pwm pompe2(Pwm2_g, Tim2, 3);
+	auto Pwm3_g = b.GpioA[3];
+	Pwm<GeneralPurposeTimer<uint32_t, 4>> pompe3(Pwm3_g, b.Tim2, 4);
 
-	auto Pwm3_g = GpioA[3];
-	Pwm pompe3(Pwm3_g, Tim2, 4);
-
+	RTOS::Time time(b.Tim7);
 #if 0
 	//Usart3
 	auto BT_Tx = GpioB[10];
@@ -112,7 +113,7 @@ int main() {
 	volatile int rawValue = 0;
 	volatile int lastUpdate = 0;
 
-	Tim4
+	b.Tim4
 	    //(30.66*8)Hz = 245.28Hz
 	    //42MHz / 245.28Hz = 171 478 ~= 73 * 2349
 	    .setPrescaler(72)
@@ -123,7 +124,7 @@ int main() {
 
 
 	//Decode the LCD
-	Tim4
+	b.Tim4
 	    .setTopCB([&rawValue, &lastUpdate, &clk, &data9, &data8, &data7, &data6](int timer_id) {
 		(void) timer_id;
 		static int v8 = 0, v9 = 0, v7 = 0, v6 = 0;
@@ -217,17 +218,17 @@ int main() {
 			//Don't display if it's 7, it just means the clock is a bit offseted
 			//(Just hope not all values are so)
 			if(pos != 7) 
-				log << "Failed ! " << pos << ":" << v6 << endl;
+				Log::log << "Failed ! " << pos << ":" << v6 << endl;
 			pos = 0;
 		}
 	})
 		.enable();
 	
-	Irq(Tim4.irqNr())
+	Irq(b.Tim4.irqNr())
 		.setPriority(15)
 		.enable();
 
-	Pwm* currentPump = &pompe1;
+	Pwm<GeneralPurposeTimer<uint32_t, 4>> * currentPump = &pompe1;
 	int currentAim = 100;
 	typedef enum {
 		WATER,
@@ -236,14 +237,14 @@ int main() {
 
 	liquidType currentLiquid = WATER;
 
-	BinarySemaphore newCommand;
-	BinarySemaphore commandDone;
+	RTOS::BinarySemaphore newCommand;
+	RTOS::BinarySemaphore commandDone;
 
 	//Ensure commandDone is false
 	commandDone.tryTake();
 	newCommand.tryTake();
 
-	Task asserv([&rawValue, &lastUpdate, &currentPump, &currentAim, &currentLiquid, &newCommand, &commandDone]() {
+	RTOS::Task asserv([&rawValue, &lastUpdate, &currentPump, &currentAim, &currentLiquid, &newCommand, &commandDone, &time]() {
 		static const int liquidValues[][5] = {
 			//Water
 			{ 100, 80, 30, 0},
@@ -267,12 +268,12 @@ int main() {
 						tValue += rawValue;
 						//If < -= 3cl, must mean += 7cl
 						if(tValue < (currentValue-30)) {
-							log << "tValue = " << tValue << ", value = " << currentValue << endl;
+							Log::log << "tValue = " << tValue << ", value = " << currentValue << endl;
 							tValue += 100;
 						}
 						//If > += 7cl, must mean -=3cl
 						if(tValue > (currentValue+70)) {
-							log << "tValue = " << tValue << ", value = " << currentValue << endl;
+							Log::log << "tValue = " << tValue << ", value = " << currentValue << endl;
 							tValue -= 100;
 						}
 						currentValue = tValue;
@@ -286,18 +287,18 @@ int main() {
 
 						if(delta > liquidValues[currentLiquid][0]) {
 							currentPump->setDutyCycle(100);
-							log << "pwm = " << 100 << endl;
+							Log::log << "pwm = " << 100 << endl;
 						} else if(delta > liquidValues[currentLiquid][1]) {
 							currentPump->setDutyCycle(50);
-							log << "pwm = " << 50 << endl;
+							Log::log << "pwm = " << 50 << endl;
 						} else if(delta > liquidValues[currentLiquid][2] || actualValue < 5) {
 							currentPump->setDutyCycle(35);
-							log << "pwm = " << 35 << endl;
+							Log::log << "pwm = " << 35 << endl;
 						} else if(delta > liquidValues[currentLiquid][3]) {
 							currentPump->setDutyCycle(25);
-							log << "pwm = " << 25 << endl;
+							Log::log << "pwm = " << 25 << endl;
 						} else {
-							log << "pwm = " << 0 << endl;
+							Log::log << "pwm = " << 0 << endl;
 							currentPump->setDutyCycle(0);
 							commandDone.give();
 							newCommand.take();
@@ -337,17 +338,17 @@ int main() {
 	commandDone.take();
 #endif
 
-	log << "Starting IR Remote" << endl;
-	auto irpin = GpioE[7];
-	IRRemote remote(Tim12, irpin);
+	Log::log << "Starting IR Remote" << endl;
+	auto irpin = b.GpioE[7];
+	IRRemote remote(b.Tim12, irpin);
 
-	log << "IR Remote started" << endl;
+	Log::log << "IR Remote started" << endl;
 
 	while(1) {
-		LedG.setDutyCycle(100);
+		b.LedG.setDutyCycle(100);
 		int cmd = remote.next();
-		LedG.setDutyCycle(0);
-		log << "Got cmd = " << cmd << endl;
+		b.LedG.setDutyCycle(0);
+		Log::log << "Got cmd = " << cmd << endl;
 		switch(cmd) {
 			case 0:
 				//10cl pompe 1

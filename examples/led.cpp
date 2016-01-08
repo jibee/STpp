@@ -1,20 +1,20 @@
-#include <Board.h>
+#include <DiscoveryBoard.hpp>
 #include <Log.h>
 #include <Time.h>
-
+#include <Pwm.h>
 DiscoveryBoard board;
 
 int main() {
     Log::log << "startup" << endl;
 
     RTOS::Time time(board.Tim7);
-#if 1
+
     board.g_LedB.setFunction(Gpio::GPIO).setDirection(Gpio::OUTPUT).setPushPull().setSpeed(Gpio::SPEED_2MHz).setState(true);
     board.g_LedG.setFunction(Gpio::GPIO).setDirection(Gpio::OUTPUT).setPushPull().setSpeed(Gpio::SPEED_100MHz).setState(true);
     board.g_LedO.setFunction(Gpio::GPIO).setDirection(Gpio::OUTPUT).setPushPull().setSpeed(Gpio::SPEED_50MHz).setState(true);
     board.g_LedR.setFunction(Gpio::GPIO).setDirection(Gpio::OUTPUT).setPushPull().setSpeed(Gpio::SPEED_25MHz).setState(true);
     time.msleep(500);
-#endif
+
     
     Log::log<<"started"<<endl;
     for(int i=0; i<5; ++i)

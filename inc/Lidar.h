@@ -3,6 +3,11 @@
 
 #include <IStream.h>
 #include <Lock.h>
+
+#include <Lock.h>
+#include <Uart.h>
+#include <Gpio.h>
+
 typedef struct {
 	char index;
 	uint16_t speed;

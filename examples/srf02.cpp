@@ -1,11 +1,10 @@
-#include <Board.h>
+#include <CherryPickerBoard.h>
 #include <Log.h>
-#include <Ax12.h>
-#include <Uart.h>
 #include <Debug.h>
 
 int main() {
-	log << "startup" << endl;
+	CherryPickerBoard b;
+	Log::log << "startup" << endl;
 
 	//115200 = 38400 * 3 = 9600 * 12
 	//
@@ -14,33 +13,33 @@ int main() {
 	//
 	//9600
 	//0x10ec
-	ExternalUart
+	b.ExternalUart
 		.enable()
 		.setMantissa(0x10e)
 		.setFraction(0xc)
 		.enableReceive()
 		.enableTransmitter()
-		.configGpio(External_RX, External_TX);
+		.configGpio(b.External_RX, b.External_TX);
 
 
-	External_TX.setDirection(Gpio::OUTPUT);
-	External_RX
+	b.External_TX.setDirection(Gpio::OUTPUT);
+	b.External_RX
 		.setResistor(Gpio::PULL_UP);
 
 	char addr = 1;
 	while(1) {
 		static char pulse[] __attribute__((section("dma"))) = "\x01\x51";
 		pulse[0]=addr;
-		ExternalUart.put(pulse, sizeof(pulse));
-		time.msleep(300);
+		b.ExternalUart.put(pulse, sizeof(pulse));
+		b.time.msleep(300);
 
 		static char result[] __attribute__((section("dma"))) = "\x01\x5e";
 		result[0]=addr;
-		ExternalUart.put(result, sizeof(result));
+		b.ExternalUart.put(result, sizeof(result));
 		char c1,c2;
-		ExternalUart >> c1 >> c2;
+		b.ExternalUart >> c1 >> c2;
 		debug << (int)(c1 << 8 | c2) << endl;
 
-		time.msleep(500);
+		b.time.msleep(500);
 	}
 }

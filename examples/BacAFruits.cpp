@@ -1,22 +1,24 @@
-#include <Board.h>
+#include <STM32F4.hpp>
 #include <Log.h>
 #include <Ax12.h>
 #include <Uart.h>
+#include <Time.h>
 
 /**
  *
  * TODO move into a dedicated example subfolder
  * */
 int main() {
-	log << "startup" << endl;
-
-	DmaStream uartDma(1, 4, 7);
+	Log::log << "startup" << endl;
+	Platform::STM32F4 b;
+	RTOS::Time time(b.Tim7);
+	Platform::DmaStream uartDma(Platform::DmaStream::DMAController1, Platform::DmaStream::S4, Platform::DmaStream::C7);
 	//Configure the pin
-	auto ax12_pin = GpioB[10];
-	Ax12 ax12_broadcast(ax12_pin, Uart(3, &uartDma), 0xfe);
-	Ax12 ax12_left(ax12_pin, Uart(3, &uartDma), 0x83);
-	Ax12 ax12_right(ax12_pin, Uart(3, &uartDma), 0x82);
-	Ax12 ax12_under(ax12_pin, Uart(3, &uartDma), 0x81);
+	auto ax12_pin = b.GpioB[10];
+	Ax12 ax12_broadcast(time, ax12_pin, Platform::Uart(3, &uartDma), 0xfe);
+	Ax12 ax12_left(time, ax12_pin, Platform::Uart(3, &uartDma), 0x83);
+	Ax12 ax12_right(time, ax12_pin, Platform::Uart(3, &uartDma), 0x82);
+	Ax12 ax12_under(time, ax12_pin, Platform::Uart(3, &uartDma), 0x81);
 	//Enable torque
 	ax12_broadcast.setSpeed(0x80);
 	ax12_broadcast.enable();

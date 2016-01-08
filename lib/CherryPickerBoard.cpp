@@ -1,8 +1,8 @@
-#include "Board.h"
+#include "CherryPickerBoard.h"
 
 using namespace Platform;
 
-Board::Board(): DiscoveryBoard(),
+CherryPickerBoard::CherryPickerBoard(): DiscoveryBoard(),
 ZigbeeUartDma(DmaStream::DMAController1, DmaStream::S4, DmaStream::C4),
 g_RLed1(GpioD[0]),
 g_RLed2(GpioD[1]),
@@ -64,8 +64,6 @@ LedB(g_LedB, Tim4, 4),
 //Other LEDs
 //No pwm available for those
 
-//Extra
-UserButton(GpioA[0]),
 
 //Which timer to use for precise (<1ms) timing
 time(Tim14),

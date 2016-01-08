@@ -1,14 +1,10 @@
-#include <tr1/functional>
 #include <Log.h>
-#include <Ax12.h>
-#include <Exti.h>
-#include <Uart.h>
-#include <Usb.h>
-#include <Watchdog.h>
-#include <Board.h>
+#include <STM32F4.hpp>
+#include <Time.h>
 
 int main() {
-    Board b;
+	Platform::STM32F4 b;
+	RTOS::Time time(b.Tim7);
 	b.Tim4
 		.setPrescaler(42)
 		.setAutoReload(1000)
@@ -19,5 +15,5 @@ int main() {
 	while(b.Tim4);
 	Log::log << "Timer4 done" << endl;
 	while(1)
-		b.time.msleep(2000);
+		time.msleep(2000);
 }

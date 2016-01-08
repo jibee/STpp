@@ -1,8 +1,9 @@
-#include <Board.h>
+#include <CherryPickerBoard.h>
 #include "HBridgeST.h"
 
 int main() {
-	HBridgeST motor0(Prop0A, Prop0B, Prop0_PWM, Tim2, 4);
+	CherryPickerBoard b;
+	HBridgeST<GeneralPurposeTimer<uint32_t, 4>> motor0(b.Prop0A, b.Prop0B, b.Prop0_PWM, b.Tim2, 4);
 
 	int v(0);
 
@@ -10,6 +11,6 @@ int main() {
 		v+=100;
 		v%= 1024;
 		motor0.setSpeed(v);
-		time.msleep(500);
+		b.time.msleep(500);
 	}
 }

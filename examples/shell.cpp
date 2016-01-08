@@ -1,4 +1,4 @@
-#include <Board.h>
+#include <CherryPickerBoard.h>
 #include <tr1/functional>
 #include <Log.h>
 #include <Debug.h>
@@ -22,7 +22,7 @@
 static Shell shell;
 
 int main() {
-    Board b;
+    CherryPickerBoard b;
 	UsbSerial usb(b);
 
 	RTOS::Task lidar_task([&usb, &b]() {

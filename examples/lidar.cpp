@@ -1,31 +1,23 @@
-#include <Board.h>
+#include <STM32F4.hpp>
 #include <tr1/functional>
 #include <Log.h>
 #include <Debug.h>
 #include <Exti.h>
 #include <UsbSerial.h>
-#include <Shell.h>
-#include <ShellAsserv.h>
-#include <ShellAx12.h>
-#include <ShellGpio.h>
-#include <ShellHBridgeST.h>
-#include <ShellIncrementalEncoder.h>
-#include <ShellPwm.h>
-#include <ShellStrategie.h>
-#include <ShellTimer.h>
 #include <Lidar.h>
 
 int main() {
-	UsbSerial usb;
+	Platform::STM32F4_WithUSB b;
+	Platform::UsbSerial usb(b);
 	usb << "Hello !" << endl;
 
-	Gpio LidarRX(GpioD[9]);
-	Uart Lidar(3);
+	Platform::Gpio LidarRX(b.GpioD[9]);
+	Platform::Uart Lidar(3);
 	LidarNeato lidar(LidarRX, Lidar);
 
 	while(true) {
 		lidar_neato_t packet;
-		Lidar >> packet;
+		lidar >> packet;
 
 #if 0
 		usb << "["

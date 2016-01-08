@@ -1,4 +1,4 @@
-#include <Board.h>
+#include <CherryPickerBoard.h>
 #include <Log.h>
 #include <Ax12.h>
 #include <Uart.h>
@@ -6,7 +6,7 @@
 int main() {
     Log::log << "startup" << endl;
 
-    Board board;
+    CherryPickerBoard board;
     
 	//DmaStream uartDma(1, 4, 7);
 	//Configure the pin

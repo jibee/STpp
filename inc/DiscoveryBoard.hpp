@@ -11,4 +11,6 @@ DiscoveryBoard();
     Gpio g_LedR;
     Gpio g_LedB;
 
+    //Extra
+    Gpio UserButton;
 };

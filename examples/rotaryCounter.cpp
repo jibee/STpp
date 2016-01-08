@@ -1,13 +1,10 @@
-#include <Board.h>
-#include <tr1/functional>
+#include <STM32F4.hpp>
 #include <Log.h>
-#include <Exti.h>
-#include <Uart.h>
-#include <Usb.h>
 #include <Time.h>
 
 int main() {
-	Tim2
+	Platform::STM32F4 b;
+	b.Tim2
 		.setAutoReload(1024)
 		.setCaptureCompare1Sel(1)
 		.setCaptureCompare2Sel(1)
@@ -17,6 +14,7 @@ int main() {
 		.setInputCapture2Filter(0)
 		.setSlaveModeSelection(3)
 		.enable();
+	RTOS::Time time(b.Tim7);
 /******************************************************************
  * Example de configurationd es registres fournit par la doc soft de la stm32f4xx
  * pour l'utilisation des compteurs incrementaux avec les timers 2-5.
@@ -31,6 +29,6 @@ int main() {
 
 	while(1){
 		time.msleep(200);
-		log << "Counter alue : " << Tim4.getCounter() << endl;
+		Log::log << "Counter alue : " << b.Tim4.getCounter() << endl;
 	}
 }

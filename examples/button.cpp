@@ -1,4 +1,4 @@
-#include <Board.h>
+#include <CherryPickerBoard.h>
 #include <tr1/functional>
 #include <Log.h>
 #include <Debug.h>
@@ -7,7 +7,7 @@
 
 int main() {
 	bool v = false;
-    Board b;
+    CherryPickerBoard b;
     UsbSerial usb(b);
 	usb << "Hello !" << endl;
 	Exti(b.UserButton)
