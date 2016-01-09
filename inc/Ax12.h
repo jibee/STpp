@@ -4,6 +4,7 @@
 #include <Uart.h>
 #include <Time.h>
 
+
 namespace P=Platform;
 class Ax12 {
 	private:
@@ -51,5 +52,9 @@ class Ax12 {
 		Ax12& goTo(unsigned short);
 		Ax12& setSpeed(unsigned short);
 };
+
+class Shell;
+
+Shell& operator<<(Shell&,Ax12&);
 
 #endif /* _AX12_H */

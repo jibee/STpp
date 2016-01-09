@@ -1,6 +1,10 @@
 #ifndef _GPIO_H
 #define _GPIO_H
 #include <stm32f4xx.h>
+
+
+class Shell;
+
 /** Platform drivers
  *
  *
@@ -138,6 +142,8 @@ class Gpio {
 	friend class GpioPort;
 	friend class Exti;
 };
+
+
 /** GPIO Port / Bank */
 class GpioPort {
     private:
@@ -166,4 +172,7 @@ class GpioPort {
 
 inline bool Gpio::getState() { return !!(port->base->IDR&(1<<number)); };
 }
+Shell& operator<<(Shell&, Platform::Gpio&);
+
+
 #endif /* _GPIO_H */

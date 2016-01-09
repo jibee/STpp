@@ -8,6 +8,8 @@
 #define __attribute_deprecated__ __attribute((deprecated))
 #endif
 
+class Shell;
+
 namespace Platform
 {
 /** hardware timer / counter
@@ -410,6 +412,7 @@ class Timer
 	Timer& clearInterrupt();
 };
 
+
 template <typename COUNTER_SIZE, int channels>
 class GeneralPurposeTimer: public Timer
 {
@@ -485,4 +488,8 @@ class AdvancedControlTimer: public GeneralPurposeTimer<uint16_t, 4>
 };
 
 }
+
+Shell& operator<<(Shell& s, Platform::Timer& tim);
+
+
 #endif /* _TIMER_H */

@@ -1,8 +1,7 @@
-#include "ShellGpio.h"
+#include "Gpio.h"
+#include "Shell.h"
 
-using namespace Platform;
-
-Shell& operator<<(Shell& shell, Gpio& g) {
+Shell& operator<<(Shell& shell, Platform::Gpio& g) {
 	if(!shell.got_name) while(1);
 	shell.add([&g,&shell](Stack& s) {
 		(void)s;

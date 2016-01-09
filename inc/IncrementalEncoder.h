@@ -24,6 +24,9 @@ class IncrementalEncoder {
 	void setValue(int v);
 };
 
+class Shell;
+Shell& operator<<(Shell& s, IncrementalEncoder& enc);
+
 template<typename COUNTER_SIZE>
 class _IncrementalEncoder_impl: public IncrementalEncoder
 {

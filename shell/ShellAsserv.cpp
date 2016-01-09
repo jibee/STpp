@@ -1,4 +1,6 @@
-#include "ShellAsserv.h"
+
+#include "Shell.h"
+#include "Asserv.h"
 
 OStream& operator<<(OStream& o, const VelocityAccel& i) {
 	o << " Current Angle = " << i.getAngle() << endl;

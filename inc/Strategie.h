@@ -20,4 +20,7 @@ class Strategie {
 		void reset();
 };
 
+class Shell;
+Shell& operator<<(Shell& s, Strategie& enc);
+
 #endif /* _STRATEGIE_H */

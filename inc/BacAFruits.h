@@ -23,4 +23,8 @@ class BacAFruits {
 	BacAFruits& release();
 };
 
+class Shell;
+
+Shell& operator<<(Shell&,BacAFruits&);
+
 #endif /* _BACAFRUITS_H */

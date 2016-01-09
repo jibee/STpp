@@ -1,4 +1,5 @@
-#include "ShellAx12.h"
+#include "Ax12.h"
+#include "Shell.h"
 
 Shell& operator<<(Shell& shell, Ax12& a) {
 	if(!shell.got_name) while(1);

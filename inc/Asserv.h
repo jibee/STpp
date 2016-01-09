@@ -6,6 +6,8 @@
 #include <Timer.h>
 #include <Log.h>
 
+class Shell;
+
 class VelocityAccelPerEncoderCompute {
     private:
 	int last;
@@ -144,6 +146,8 @@ class _AsservBase
 	int getDist();
 	friend OStream& operator<<(OStream& o, const _AsservBase& a);
 };
+
+Shell& operator<<(Shell&, _AsservBase&);
 
 template <class PWM_TIMER>
 class Asserv: public _AsservBase {

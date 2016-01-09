@@ -1,4 +1,5 @@
-#include "ShellBacAFruits.h"
+#include "BacAFruits.h"
+#include "Shell.h"
 
 Shell& operator<<(Shell& shell, BacAFruits& bac) {
 	if(!shell.got_name) while(1);

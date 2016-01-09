@@ -2,6 +2,7 @@
 #define _PWM_H
 #include <Gpio.h>
 #include <Timer.h>
+#include <Shell.h>
 
 template <class TIMER>
 class Pwm {
@@ -57,6 +58,18 @@ template <class TIMER>
 Pwm<TIMER>& Pwm<TIMER>::setComparator(unsigned int cmp) {
     tim.setChannelComparator(m_channel, cmp);
     return *this;
+}
+
+template<class TIMER_T>
+Shell& operator<<(Shell& shell, Pwm<TIMER_T>& pwm)
+{
+    if(!shell.got_name) while(1);
+
+    addSetter(shell, pwm, setComparator);
+    addSetter(shell, pwm, setDutyCycle);
+
+    shell.got_name = false;
+    return shell;
 }
 
 #endif /* _PWM_H */
