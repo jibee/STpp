@@ -134,3 +134,26 @@ int VelocityAccel::getAccelAngle() const {
 int VelocityAccel::getAccelDist() const {
 	return (left.getAccel() + right.getAccel())/2;
 }
+
+
+OStream& operator<<(OStream& o, const VelocityAccel& i) {
+    o << " Current Angle = " << i.getAngle() << endl;
+    o << " Current Distance = " << i.getDist() << endl;
+    o << " Target Angle = " << i.getTargetAngle() << endl;
+    o << " Target Distance = " << i.getTargetDistance() << endl;
+    o << " Delta Angle = " << i.getDeltaAngle() << endl;
+    o << " Delta Distance = " << i.getDeltaDist() << endl;
+    o << " Integral Angle = " << i.getIntegralAngle() << endl;
+    o << " Integral Distance = " << i.getIntegralDist() << endl;
+    o << endl;
+
+    o << " Max Linear Accel = " << i.maxLinearAccel << endl;
+    o << " Min Linear Accel = " << i.minLinearAccel << endl;
+
+    o << " Max Rotation Accel = " << i.maxRotationAccel << endl;
+    o << " Min Rotation Accel = " << i.minRotationAccel << endl;
+
+    o << " Max Vel = " << i.maxVel << endl;
+    o << " Min Vel = " << i.minVel << endl;
+    return o;
+}

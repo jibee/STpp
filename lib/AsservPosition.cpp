@@ -34,3 +34,10 @@ void Position::update() {
 	y += dy;
 	previousEDist = infos.getDist();
 }
+
+OStream& operator<<(OStream& o, const Position& p) {
+    o << "X = " << (int)(p.x*1000) << " mm" << endl;
+    o << "Y = " << (int)(p.y*1000) << " mm" << endl;
+    o << "Theta = " << (int)(p.theta*10) << " deciDegres" << endl;
+    return o;
+}

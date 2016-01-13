@@ -1,5 +1,6 @@
 #include <BacAFruits.h>
 #include <Log.h>
+#include "Shell.h"
 
 BacAFruits::BacAFruits(Ax12* external, Ax12* centered, Ax12* reservoir, bool left, RTOS::Time& t) :
 	external(external), centered(centered),
@@ -41,3 +42,22 @@ BacAFruits& BacAFruits::close() {
 
 	return *this;
 }
+
+
+Shell& operator<<(Shell& shell, BacAFruits& bac) {
+    if(!shell.got_name) while(1);
+
+    shell.add([&bac,&shell](Stack& s) {
+        (void) s;
+        bac.forward();
+    }, shell.current_object, "forward");
+
+    shell.add([&bac,&shell](Stack& s) {
+        (void) s;
+        bac.close();
+    }, shell.current_object, "close");
+
+    shell.got_name = false;
+    return shell;
+}
+

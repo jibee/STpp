@@ -1,5 +1,6 @@
 #include <Ax12.h>
 #include <Log.h>
+#include <Shell.h>
 
 static char buf[16] __attribute((section("dma")));
 static char *bufPos = buf;
@@ -226,4 +227,14 @@ Ax12& Ax12::setMaxTorque(unsigned short int value, bool persist) {
 Ax12& Ax12::setID(char id) {
 	writeReg(3, id);
 	return *this;
+}
+
+Shell& operator<<(Shell& shell, Ax12& a) {
+    if(!shell.got_name) while(1);
+
+    addSetter(shell, a, goTo);
+    addSetter(shell, a, setID);
+
+    shell.got_name = false;
+    return shell;
 }

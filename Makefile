@@ -22,7 +22,7 @@ SRC:=$(wildcard src/*.c) $(wildcard src/*.s)
 SRC_OBJS:=$(subst .c,.o,$(SRC))
 SRC_OBJS:=$(subst .s,.o,$(SRC_OBJS))
 CXXFLAGS=-mcpu=cortex-m4 -g -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-LDFLAGS=-flto 
+LDFLAGS=
 else
 ARCH_CFLAGS=-DARCH=unix
 CXXFLAGS=-g
