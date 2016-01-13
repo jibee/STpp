@@ -47,10 +47,6 @@ DRIVERS_OBJS=$(subst .cpp,.o,$(DRIVERS_SRC))
 DRIVERS_OBJS:=$(subst .c,.o,$(DRIVERS_OBJS))
 DRIVERS_INCS=$(wildcard drivers/inc/*.h)
 
-SHELL_SRC=$(wildcard shell/*.cpp)
-SHELL_OBJS=$(subst .cpp,.o,$(SHELL_SRC))
-SHELL_INCS=$(wildcard drivers/inc/*.h)
-
 PLAT_SRC=$(wildcard plat-$(PLAT)/*.cpp)
 PLAT_OBJS=$(subst cpp,o,$(PLAT_SRC))
 PLAT_INCS=$(wildcard plat-inc/*.h)
