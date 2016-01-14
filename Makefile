@@ -56,7 +56,7 @@ CXX=$(PREFIX)gcc
 LD=$(PREFIX)ld
 AS=$(PREFIX)as
 
-TARGETS:=led capa ax12 button timer shell BacAFruitsBT BacAFruits dumpLcd incrementalEncoder irremote lcd ledstrip lidar motor nfc remote rotaryCounter srf02
+TARGETS:=led capa cherryPicker/ax12 button timer cherryPicker/shell cherryPicker/BacAFruitsBT cherryPicker/BacAFruits dumpLcd incrementalEncoder irremote cherryPicker/lcd ledstrip lidar motor cherryPicker/nfc remote rotaryCounter cherryPicker/srf02
 EXECS:=$(addprefix examples/,$(TARGETS))
 ifeq ($(PLAT),stm)
 EXECS:=$(addsuffix .flash,$(EXECS)) $(addsuffix .ram,$(EXECS))

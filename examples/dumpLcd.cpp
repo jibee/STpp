@@ -1,4 +1,4 @@
-#include <CherryPickerBoard.h>
+#include <DiscoveryBoard.hpp>
 #include <Bluetooth.h>
 #include <Gpio.h>
 #include <Exti.h>
@@ -8,6 +8,8 @@
 #include <Log.h>
 #include <Lock.h>
 #include <IRRemote.h>
+#include <Pwm.h>
+#include <Time.h>
 
 int digit_read(int low, int high) {
 	int v = 0;
@@ -53,7 +55,7 @@ int digit_read(int low, int high) {
 }
 
 int main() {
-	CherryPickerBoard b;
+	DiscoveryBoard b;
 	//Not actually a clock
 	//But a non-displayed digit that is used as a clock
 	auto clk = b.GpioB[5];
@@ -343,11 +345,12 @@ int main() {
 	IRRemote remote(b.Tim12, irpin);
 
 	Log::log << "IR Remote started" << endl;
+	Pwm<GeneralPurposeTimer<uint16_t, 4>> LedG(b.g_LedG, b.Tim4, 3);
 
 	while(1) {
-		b.LedG.setDutyCycle(100);
+		LedG.setDutyCycle(100);
 		int cmd = remote.next();
-		b.LedG.setDutyCycle(0);
+		LedG.setDutyCycle(0);
 		Log::log << "Got cmd = " << cmd << endl;
 		switch(cmd) {
 			case 0:
