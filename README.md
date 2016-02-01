@@ -10,7 +10,7 @@ plat-inc are the matching headers.
 The philosphy behind them is to be a close match to actual STM32F4 registers.
 It hides the access to RCC clocks though, and there are some helper functions.
 
-- drivers contain higher level drivers. They are for components external to the STM32F4 itself.
+- lib contain higher level drivers. They are for components external to the STM32F4 itself.
 
 Current state
 =============
