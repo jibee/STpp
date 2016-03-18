@@ -1,5 +1,6 @@
 #ifndef _HBRIDGE_ST_H
 #define _HBRIDGE_ST_H
+#include <HBridge.h>
 #include <Gpio.h>
 #include <Timer.h>
 #include <Pwm.h>
@@ -19,7 +20,7 @@ class HBridgeST {
 	Pwm<TIMER> pwm;
     public:
 	HBridgeST(Platform::Gpio& a, Platform::Gpio& b, Platform::Gpio& pwm, TIMER& tim, int chan);
-	void setSpeed(int);
+	virtual void setSpeed(int);
 };
 
 template <class TIMER>
