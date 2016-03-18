@@ -19,15 +19,30 @@ I2C1_TX C1S6 C1S7
 
 using namespace Platform;
 
+static I2C* __i2c_1=nullptr;
+static I2C* __i2c_2=nullptr;
+static I2C* __i2c_3=nullptr;
+
+extern "C"
+{
+    void I2C1_EV_IRQHandler(){ if(__i2c_1) __i2c_1->event(); } /* I2C1 Event */
+    void I2C1_ER_IRQHandler(){ if(__i2c_1) __i2c_1->error(); } /* I2C1 Error */
+    void I2C2_EV_IRQHandler(){ if(__i2c_2) __i2c_2->event(); }/* I2C2 Event */
+    void I2C2_ER_IRQHandler(){ if(__i2c_2) __i2c_2->error(); } /* I2C2 Error */
+    void I2C3_EV_IRQHandler(){ if(__i2c_3) __i2c_3->event(); } /* I2C3 event */
+    void I2C3_ER_IRQHandler(){ if(__i2c_3) __i2c_3->error(); }; /* I2C3 error */
+}
+
+
 I2C::I2C(Gpio& scl, Gpio& sda, I2C_Device d)
 {
     // Switch clock on and locate the base register addressp
     switch(d)
     {
-	case I2C_1: { m_base = I2C1; RCC->APB1ENR|=1<<21; break; }
-	case I2C_2: { m_base = I2C2; RCC->APB1ENR|=1<<22; break; }
-	case I2C_3: { m_base = I2C3; RCC->APB1ENR|=1<<23; break; }
-	default: while(1){};
+        case I2C_1: { m_base = I2C1; RCC->APB1ENR|=1<<21; __i2c_1=this; break; }
+        case I2C_2: { m_base = I2C2; RCC->APB1ENR|=1<<22; __i2c_2=this; break; }
+        case I2C_3: { m_base = I2C3; RCC->APB1ENR|=1<<23; __i2c_3=this; break; }
+        default: while(1){};
     }
     // Initialise the I2C bus controller
     // Control Register 1: Enable device, set to I2C mode
@@ -43,8 +58,7 @@ I2C::I2C(Gpio& scl, Gpio& sda, I2C_Device d)
     // APB1 clock is 48Mhz -> we set the divisor to 240
     m_base->CCR &= 0b0011000000000000;
     m_base->CCR |= 240;
-// ACK Enable
-    m_base->CR1|=1<<10;    
+    setAckEnable();
     set7bitMode();
 // Own Address - not needed really as we will only act as master.
     setOwnAddress(0x00);
@@ -105,6 +119,7 @@ void I2C::write(uint8_t address, uint8_t* data, int data_count)
 
 void I2C::read(uint8_t address, uint8_t* data, int data_count)
 {
+    disableInterrupts();
    /* initiate start sequence */
     generateStart();
     /* check start bit flag. This is required to proceed further*/
@@ -123,13 +138,110 @@ void I2C::read(uint8_t address, uint8_t* data, int data_count)
         /*wait for byte send to complete*/
         // An interrupt is raised when this happens
         while(!_RxNEBitSet());
+        if(i==data_count-1)
+        {
+            // Last byte, clear the ACK bit
+            clearAckEnable();
+        }
         /*mode register address*/
         data[i]=getData();
     }
     /*generate stop*/
     generateStop();
-
 }
+
+void I2C::read_async(uint8_t address, uint8_t* data, int data_count, I2C::ReadCompletionCallback cb)
+{
+    m_read_cb=cb;
+    start_async(address, data, data_count, Read);
+}
+void I2C::write_async(uint8_t address, uint8_t* data, int data_count, I2C::WriteCompletionCallback cb)
+{
+    m_write_cb=cb;
+    start_async(address, data, data_count, Write);
+}
+
+void I2C::start_async(uint8_t address, uint8_t* data, int data_count, Direction dir)
+{
+    if(Idle==m_activeState)
+    {
+        enableInterrupts();
+        m_activeState=Started;
+        m_activeDirection=dir;
+        m_address=address;
+        m_data=data;
+        m_data_position=0;
+        m_data_count=data_count;
+        setAckEnable();
+        generateStart();
+    }
+}
+
+
+void I2C::event()
+{
+    switch(m_activeState)
+    {
+        case Idle: break;
+        case Synchronous: break;
+        case Started:
+        {
+            _StartBitIsSet();
+            /*send write command to chip*/
+            m_activeState=AddressSent;
+            setAddress(m_address, m_activeDirection);
+            break;
+        }
+        case AddressSent:
+        {
+            // Once address is sent ADDR is set
+            // Condition is cleared when both registers are read
+            // An interrupt is raised when Addr is set
+            _AddrBitIsSet();
+            /*check master is now in Tx mode*/
+            _ReceiveModeSet();
+            m_activeState=DataTransmission;
+            if(Write==m_activeDirection)
+            {
+                setData(m_data[m_data_position]);
+                m_data_position++;
+            }
+            break;
+        }
+        case DataTransmission:
+        {
+            if(Read==m_activeDirection)
+            {
+                if(m_data_position==m_data_count-1)
+                {
+                    clearAckEnable();
+                }
+                m_data[m_data_position]=getData();
+                m_data_position++;
+                if(m_data_position>=m_data_count)
+                {
+                    generateStop();
+                    callReadCompletionCallback();
+                    m_activeState=Idle;
+                }
+            }
+            else{
+                if(m_data_position>=m_data_count)
+                {
+                    generateStop();
+                    callWriteCompletionCallback();
+                    m_activeState=Idle;
+                }
+                else
+                {
+                    setData(m_data[m_data_position]);
+                    m_data_position++;
+                }
+            }
+        }
+    }
+}
+
 
 void I2C::generateStart()
 {
@@ -164,6 +276,41 @@ bool I2C::_RxNEBitSet()
     return m_base->SR1&1<<6;
 }
 
+void I2C::error()
+{
+
+}
+void I2C::setAckEnable()
+{
+// ACK Enable
+    m_base->CR1|=1<<10;
+}
+void I2C::clearAckEnable()
+{
+    m_base->CR1&=~(1<<10);
+}
+
+void I2C::callReadCompletionCallback()
+{
+    // TODO use a deferred call?
+    m_read_cb(m_data, m_data_count);
+}
+void I2C::callWriteCompletionCallback()
+{
+    // TODO use a deferred call?
+    m_write_cb();
+}
+
+void I2C::enableInterrupts()
+{
+    m_base->CR2|=0b11<<9;
+}
+
+
+void I2C::disableInterrupts()
+{
+    m_base->CR2&=~(0b11<<9);
+}
 
 
 
