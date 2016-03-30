@@ -1,6 +1,19 @@
 #include "I2C.hpp"
 #include <stm32f4xx.h>
 
+#define I2C_DEBUG_ON 0
+
+#ifdef I2C_DEBUG_ON
+#include <Log.h>
+#endif
+
+inline void i2c_debug(const char* msg)
+{
+#ifdef I2C_DEBUG_ON
+    Log::log << msg << endl;
+#endif
+}
+
 // INterrupt vectors
 /*
 31 38 settable I2C1_EV I 2C1 event interrupt 0x0000 00BC
@@ -39,9 +52,9 @@ I2C::I2C(Gpio& scl, Gpio& sda, I2C_Device d)
     // Switch clock on and locate the base register addressp
     switch(d)
     {
-        case I2C_1: { m_base = I2C1; RCC->APB1ENR|=1<<21; __i2c_1=this; break; }
-        case I2C_2: { m_base = I2C2; RCC->APB1ENR|=1<<22; __i2c_2=this; break; }
-        case I2C_3: { m_base = I2C3; RCC->APB1ENR|=1<<23; __i2c_3=this; break; }
+        case I2C_1: { m_base = I2C1; RCC->APB1ENR|=(1<<21); __i2c_1=this; break; }
+        case I2C_2: { m_base = I2C2; RCC->APB1ENR|=(1<<22); __i2c_2=this; break; }
+        case I2C_3: { m_base = I2C3; RCC->APB1ENR|=(1<<23); __i2c_3=this; break; }
         default: while(1){};
     }
     // Initialise the I2C bus controller
@@ -63,8 +76,8 @@ I2C::I2C(Gpio& scl, Gpio& sda, I2C_Device d)
 // Own Address - not needed really as we will only act as master.
     setOwnAddress(0x00);
     // Map the pins to the I2C controller
-    scl.setAlternate(Gpio::I2C1_3);
-    sda.setAlternate(Gpio::I2C1_3);
+    scl.setAlternate(Gpio::I2C1_3).setOpenDrain();
+    sda.setAlternate(Gpio::I2C1_3).setOpenDrain();
 }
 
 void I2C::set7bitMode()
@@ -92,27 +105,43 @@ void I2C::setData(uint8_t data)
 
 void I2C::write(uint8_t address, uint8_t* data, int data_count)
 {
+    disableInterrupts();
+    clearNack();
+    i2c_debug("About to start write");
    /* initiate start sequence */
     generateStart();
     /* check start bit flag. This is required to proceed further*/
     // When Start bit is set interrupt is raised if ITEVFEN is set
     while(!_StartBitIsSet());
+    i2c_debug("Start sent, sending Address");
     /*send write command to chip*/
     setAddress(address, I2C::Write);
     // Once address is sent ADDR is set
     // Condition is cleared when both registers are read
     // An interrupt is raised when Addr is set
-    while(!_AddrBitIsSet());
+    i2c_debug("Waiting for address to be sent");
+    while(!_AddrBitIsSet() && !_NackBitIsSet());
+    if(_NackBitIsSet())
+    {
+        i2c_debug("Not ack");
+        clearNack();
+        generateStop();
+        return;
+    }
     /*check master is now in Tx mode*/
+    i2c_debug("Waiting transmit mode");
     while(!_TransmitModeSet());
     for(int i=0; i<data_count; ++i)
     {
+        i2c_debug("Sending byte");
         /*mode register address*/
         setData(data[i]);
         /*wait for byte send to complete*/
         // An interrupt is raised when this happens
         while(!_TxEBitSet());
+        i2c_debug("Byte sent");
     }
+    i2c_debug("All data sent");
     /*generate stop*/
     generateStop();
 }
@@ -120,23 +149,36 @@ void I2C::write(uint8_t address, uint8_t* data, int data_count)
 void I2C::read(uint8_t address, uint8_t* data, int data_count)
 {
     disableInterrupts();
+    clearNack();
+    i2c_debug("About to start read");
    /* initiate start sequence */
     generateStart();
     /* check start bit flag. This is required to proceed further*/
     // When Start bit is set interrupt is raised if ITEVFEN is set
     while(!_StartBitIsSet());
+    i2c_debug("Start sent, sending Address");
     /*send write command to chip*/
     setAddress(address, I2C::Read);
     // Once address is sent ADDR is set
     // Condition is cleared when both registers are read
     // An interrupt is raised when Addr is set
-    while(!_AddrBitIsSet());
+    i2c_debug("Waiting for address to be sent");
+    while(!_AddrBitIsSet()&&!_NackBitIsSet());
+    if(_NackBitIsSet())
+    {
+        i2c_debug("Received NACK");
+        clearNack();
+        generateStop();
+        return;
+    }
     /*check master is now in Tx mode*/
+    i2c_debug("Waiting receive mode");
     while(!_ReceiveModeSet());
     for(int i=0; i<data_count; ++i)
     {
         /*wait for byte send to complete*/
         // An interrupt is raised when this happens
+        i2c_debug("Waiting for data");
         while(!_RxNEBitSet());
         if(i==data_count-1)
         {
@@ -146,6 +188,7 @@ void I2C::read(uint8_t address, uint8_t* data, int data_count)
         /*mode register address*/
         data[i]=getData();
     }
+    i2c_debug("All data received");
     /*generate stop*/
     generateStop();
 }
@@ -253,19 +296,19 @@ void I2C::generateStop()
 }
 bool I2C::_StartBitIsSet()
 {
-    return m_base->SR1&1<<0;
+    return m_base->SR1 & (1<<0);
 }
 bool I2C::_AddrBitIsSet()
 {
-    return m_base->SR1&1<<1;
+    return m_base->SR1 & (1<<1);
 }
 bool I2C::_TransmitModeSet()
 {
-    return m_base->SR2&1<<2;
+    return m_base->SR2& (1<<2);
 }
 bool I2C::_TxEBitSet()
 {
-    return m_base->SR1&1<<7;
+    return m_base->SR1& (1<<7);
 }
 bool I2C::_ReceiveModeSet()
 {
@@ -273,7 +316,7 @@ return !_TransmitModeSet();
 }
 bool I2C::_RxNEBitSet()
 {
-    return m_base->SR1&1<<6;
+    return m_base->SR1 & (1<<6);
 }
 
 void I2C::error()
@@ -283,7 +326,7 @@ void I2C::error()
 void I2C::setAckEnable()
 {
 // ACK Enable
-    m_base->CR1|=1<<10;
+    m_base->CR1|=(1<<10);
 }
 void I2C::clearAckEnable()
 {
@@ -303,7 +346,7 @@ void I2C::callWriteCompletionCallback()
 
 void I2C::enableInterrupts()
 {
-    m_base->CR2|=0b11<<9;
+    m_base->CR2|=(0b11<<9);
 }
 
 
@@ -312,5 +355,13 @@ void I2C::disableInterrupts()
     m_base->CR2&=~(0b11<<9);
 }
 
+bool I2C::_NackBitIsSet()
+{
+    return m_base->SR1 & (1<<10);
+}
+void I2C::clearNack()
+{
+    m_base->SR1 &= (~(1<<10));
+}
 
 

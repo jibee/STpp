@@ -185,6 +185,8 @@ namespace Platform
 	    void callWriteCompletionCallback();
 	    void disableInterrupts();
 	    void enableInterrupts();
+	    bool _NackBitIsSet();
+	    void clearNack();
         /** State of the transmission */
         enum ProtocolState
         {
