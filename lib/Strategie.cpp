@@ -1,4 +1,5 @@
 #include "Strategie.h"
+#include <Shell.h>
 
 Strategie::Strategie(Ax12& Mamoutor, _AsservBase& a, RTOS::Time& t) :
     mamoutor_servo(Mamoutor), asserv(a), time(t) {

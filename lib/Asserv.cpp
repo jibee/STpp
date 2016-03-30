@@ -1,5 +1,6 @@
 #include <Irq.h>
 #include "Asserv.h"
+#include <Shell.h>
 
 using namespace Platform;
 
@@ -220,4 +221,141 @@ Shell& operator<<(Shell& shell, _AsservBase& a) {
     return shell;
 }
 
+Asserv& Asserv::reset() {
+    tim.disable();
+    motorl.setSpeed(0);
+    motorr.setSpeed(0);
+    return *this;
+}
+
+Asserv::Asserv(IncrementalEncoder& _left, IncrementalEncoder& _right,
+    Platform::Timer& tim, HBridge &mot1, HBridge &mot2) :
+    _AsservBase(_left, _right, tim),
+    motorl(mot1), motorr(mot2)
+{
+    throttle = 100;
+
+
+    tim
+        .setTopCB([&tim, this](int timer_id) {
+            (void)timer_id;
+            ++date;
+            infos.compute(targetDist, targetAngle);
+            position.update();
+
+            int d_d = 0, d_a = 0;
+            //Distance
+            d_d += c_accelDist * infos.getAccelDist();
+            d_d += c_velDist * infos.getVelocityDist();
+            d_d += c_propDist * infos.getDeltaDist();
+            d_d += c_intDist * infos.getIntegralDist();
+
+            //Angle
+            d_a += c_accelAngle * infos.getAccelDist();
+            d_a += c_velAngle * infos.getVelocityAngle();
+            d_a += c_propAngle * infos.getDeltaAngle();
+            d_a += c_intAngle * infos.getIntegralAngle();
+#define abs(x) ((x) > 0 ? (x) : -(x))
+#define signof(x, y) ((x) > 0 ? (y) : -(y))
+
+#if 1
+            //Check if we're near the destination (dist)
+            int maxAccel = infos.getVelocityDist() > 0 ? maxBackwardAccel : maxForwardAccel;
+            int x0 = (1000*infos.getVelocityDist()*infos.getVelocityDist())/(16*maxAccel);
+            x0 = abs(x0);
+            if(abs(infos.getDeltaDist()) < x0) {
+                //Brrrrrrrrrrrrrrrrrrrrrrrrrraaaaaaaaaaakkkkkeeeeeeeee
+                d_d = 0;
+            }
+#endif
+#if 1
+            //Check if we're near the destination (angle)
+            int t0 = (1000*infos.getVelocityAngle()*infos.getVelocityAngle())/(16*maxRotationAccel);
+            t0 = abs(t0);
+            if(abs(infos.getDeltaAngle()) < t0) {
+                //Brrrrrrrrrrrrrrrrrrrrrrrrrraaaaaaaaaaakkkkkeeeeeeeee
+                d_a = 0;
+            }
+#endif
+
+            int dl = d_d + d_a;
+            int dr = d_d - d_a;
+
+            dl/=0x4000;
+            dr/=0x4000;
+
+            if(abs(dl) > maxEngine || abs(dr) > maxEngine) {
+                if(abs(dl) > abs(dr)) {
+                    dr = signof(dr, abs(dr)-abs(dl)+maxEngine);
+                    dl = signof(dl, maxEngine);
+                } else {
+                    dl = signof(dl, abs(dl)-abs(dr)+maxEngine);
+                    dr = signof(dr, maxEngine);
+                }
+            }
+
+            int tot = abs(dl)+abs(dr);
+
+            if(tot < minEngine) {
+                dl = 0;
+                dr = 0;
+            }
+
+            //Check we're not blocked
+            if(infos.getVelocityDist() == 0 && infos.getVelocityAngle() == 0) {
+                beenZero++;
+            } else
+                beenZero = 0;
+
+            //150ms
+            if(beenZero > 150) {
+                if(dateStart) {
+                    Log::log << "At " << date << ", we finished command from " << dateStart << endl;
+                    int res = date - dateStart;
+                    Log::log << "That makes time of " << res/1000 << "s" << res%1000 << "ms" << endl;
+                    dateStart = 0;
+                    waiting = false;
+                }
+                dl = 0;
+                dr = 0;
+            }
+
+
+            //ABS/ESP
+            if(infos.getAccelDist() > maxForwardAccel || infos.getAccelDist() < -maxBackwardAccel) {
+                if(throttle > 0) {
+                    throttle -= 10;
+                }
+                Log::log << "Throttle at " << throttle << endl;
+                Log::log << " Accel = " << infos.getAccelDist() << endl;
+            } else {
+                if(throttle < 100) {
+                    Log::log << "Throttle at " << throttle << endl;
+                    throttle += 10;
+                }
+            }
+            int ref = 0;
+#if 1
+            if( (infos.getAccelDist() * infos.getVelocityDist()) > 0) {
+                //We are accelerating
+                //Throttling means reducing power
+                ref = 0;
+            } else if( (infos.getAccelDist() * infos.getVelocityDist()) < 0) {
+                //We are braking
+                //Throttling means increasing power
+
+                ref = signof(infos.getVelocityDist(), 4096);
+            }
+#endif
+
+            dl = ref * (100-throttle) + throttle * dl;
+            dl /= 100;
+            dr = ref * (100-throttle) + throttle * dr;
+            dr /= 100;
+
+            motorl.setSpeed(dl);
+            motorr.setSpeed(dr);
+        })
+        .enable();
+}
 
