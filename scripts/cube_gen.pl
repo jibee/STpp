@@ -55,6 +55,17 @@ sub issue_classes
     delete $peripherals->{RCC};
     delete $peripherals->{SYS};
     my $def = {init=>[], decl=>[], cons=>[], includes=>[]};
+    foreach my $pin_name (sort keys %$unused_pins)
+    {
+	my $pin_def = $unused_pins->{$pin_name};
+	my $defined_name = $pin_def->{LABELs}||$pin_name;
+	$defined_name=~s/(\[|\]|\s|\\|\/)/_/g;
+	$defined_name=~s/_+/_/g;
+	$defined_name=~s/^_//;
+	$defined_name=~s/_$//;
+	process_gpio_decl($def, $pin_def, $defined_name);
+    }
+
 
 # Process ADC: simply set the relevant GPIOs into ADC mode
     my $issued_adcs={};
@@ -275,7 +286,7 @@ sub process_gpio_decl
 {
     my ($def, $portspec, $obj_name)=@_;
     push @{$def->{decl}}, "Platform::Gpio $obj_name;";
-    push @{$def->{init}}, $obj_name."(".gpio_name($portspec->{PINS}).")";
+    push @{$def->{init}}, $obj_name."(".gpio_name($portspec->{PINS}||$portspec->{PINs}).")";
 }
 
 sub gpio_name
@@ -294,7 +305,7 @@ sub gpio_port
 }
 sub gpio_pin
 {
-    return substr($_[0], 2, 1);
+    return substr($_[0], 2, 2);
 }
 
 sub code_gen
