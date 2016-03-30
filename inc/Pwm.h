@@ -50,7 +50,7 @@ Pwm<TIMER>& Pwm<TIMER>::setDutyCycle(float v) {
 
 template <class TIMER>
 Pwm<TIMER>& Pwm<TIMER>::setDutyCycle(int percent) {
-    tim.setChannelComparator(m_channel, percent*tim.getAutoReload()/100);
+    tim.setChannelComparator(m_channel, (int)(((float)percent/100.0)*((float)tim.getAutoReload())));
     return *this;
 }
 
