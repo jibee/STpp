@@ -63,6 +63,7 @@ sub issue_classes
 	$defined_name=~s/_+/_/g;
 	$defined_name=~s/^_//;
 	$defined_name=~s/_$//;
+	$defined_name=~s/-/_/g;
 	process_gpio_decl($def, $pin_def, $defined_name);
     }
 
@@ -72,8 +73,11 @@ sub issue_classes
     my %adc;
     foreach (qw/ADC1 ADC2 ADC3/)
     {
-	%adc = (%adc, %{$peripherals->{$_}});
-	delete $peripherals->{$_};
+	if($peripherals->{$_})
+	{
+            %adc = (%adc, %{$peripherals->{$_}});
+            delete $peripherals->{$_};
+	}
     }
 
     process_adc($def, \%adc, $issued_adcs);
@@ -81,10 +85,48 @@ sub issue_classes
     process_uart($def, $peripherals, $_) foreach (qw/UART1 UART2 UART3 UART4/);
 # Process the Timers and the relevant PWMs
     process_timer($def, $peripherals, $_) foreach (map {"TIM".$_} (1..14));
-
+# Process the SPI buses
+    process_SPI($def, $peripherals, $_) foreach(qw/SPI1 SPI2 SPI3/);
     say Dumper($peripherals);
 
     return code_gen($baseClass, $general_spec->{Configuration}, $def);
+}
+
+sub process_SPI
+{
+    my ($def, $periphs, $name) = @_;
+    return unless $periphs->{$name};
+    my $periph = $periphs->{$name};
+    delete $periphs->{$name};
+    
+    my $original_name = $name;
+    my @labels = grep {$_} uniq(map {$_->{LABELs}} values %$periph);
+    if(@labels)
+    {
+	$name=common_part(@labels);
+    }
+    
+# TODO determine if a DMA stream has been setup for this SPI port
+    my $miso_pin;
+    my $mosi_pin;
+    my $clk_pin;
+    foreach my $x_pin (values %$periph)
+    {
+	my $pin_name = $x_pin->{FUNCTIONS};
+	$pin_name=~s/SPI/$name/;
+	$mosi_pin=$pin_name if $pin_name=~/_MOSI$/;
+	$miso_pin=$pin_name if $pin_name=~/_MISO$/;
+	$clk_pin=$pin_name if $pin_name=~/_CLK$/;
+        process_gpio_decl($def, $x_pin, $pin_name);
+        push @{$def->{cons}}, $name.".configGpio(".$pin_name.");";
+    }
+    
+    push @{$def->{includes}}, "#include <Spi.h>";
+    push @{$def->{decl}}, "Platform::Spi ".$name.";";
+    push @{$def->{init}}, $name."(".substr($original_name, -1, 1).")";
+    
+    #say Dumper($periph);
+    
 }
 
 sub process_timer
@@ -301,11 +343,13 @@ sub gpio_name
 
 sub gpio_port
 {
-    return substr($_[0], 1, 1);
+    return $1 if($_[0]=~/P([A-Z])(\d+)/);
+    return "";
 }
 sub gpio_pin
 {
-    return substr($_[0], 2, 2);
+    return $2 if($_[0]=~/P([A-Z])(\d+)/);
+    return "";
 }
 
 sub code_gen
@@ -355,7 +399,7 @@ sub consume_header
     my ($f)=@_;
     my %retval;
     my $inBlock=1;
-    while(my $line=<$f> and $inBlock)
+    while(defined(my $line=<$f>) and $inBlock)
     {
 	chomp $line;
 	if($line=~/^([^\t]+)\t(.*)$/)
@@ -380,7 +424,7 @@ sub consume_block
     my ($f)=@_;
     my @retval;
     my $inBlock=1;
-    while(my $line=<$f> and $inBlock)
+    while(defined(my $line=<$f>) and $inBlock)
     {
 	chomp $line;
 	if($line=~/^([^\t]+)\t([^\t]+)\t([^\t]+)\t(.*)$/)
