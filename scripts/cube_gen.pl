@@ -23,7 +23,10 @@ sub parse_cube_conf
     my $pins_spec = consume_pins($f);
 
     $_->{"PINs"}=~s/\*$// foreach @$pins_spec;
-
+    foreach(@$pins_spec)
+    {
+        $_->{"LABELs"}=$1 if $_->{"LABELs"}=~/\[([^\]]+)/;
+    }
     my %pins = map { $_->{"PINs"}=>$_ } @$pins_spec;
     my %peripherals = map { $_->{"PERIPHERALS"}=>{} } @$peripherals_spec;
     my %peripheral_pins;
@@ -59,6 +62,11 @@ sub issue_classes
     {
 	my $pin_def = $unused_pins->{$pin_name};
 	my $defined_name = $pin_def->{LABELs}||$pin_name;
+	if($defined_name=~/\[([^\]]+)/)
+	{
+	warn("Replacing pin name $defined_name with $1");
+            $defined_name = $1;
+	}
 	$defined_name=~s/(\[|\]|\s|\\|\/)/_/g;
 	$defined_name=~s/_+/_/g;
 	$defined_name=~s/^_//;
