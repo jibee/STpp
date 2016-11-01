@@ -95,11 +95,45 @@ sub issue_classes
     process_timer($def, $peripherals, $_) foreach (map {"TIM".$_} (1..14));
 # Process the SPI buses
     process_SPI($def, $peripherals, $_) foreach(qw/SPI1 SPI2 SPI3/);
+# Process the I2C buses
+    process_I2C($def, $peripherals, $_) foreach(qw/I2C1 I2C2 I2C3/);
+# Process the I2S buses
+#    process_I2S($def, $peripherals, $_) foreach(qw/I2S1 I2S2 I2S3/);
     say Dumper($peripherals);
 
     return code_gen($baseClass, $general_spec->{Configuration}, $def);
 }
 
+sub process_I2C
+{
+    my ($def, $periphs, $name) = @_;
+    return unless $periphs->{$name};
+    my $periph = $periphs->{$name};
+    delete $periphs->{$name};
+    
+    my $original_name = $name;
+    my @labels = grep {$_} uniq(map {$_->{LABELs}} values %$periph);
+    if(@labels)
+    {
+	$name=common_part(@labels);
+    }
+    
+# TODO determine if a DMA stream has been setup for this I2C port
+    my $sda_pin;
+    my $scl_pin;
+    foreach my $x_pin (values %$periph)
+    {
+	my $pin_name = $x_pin->{FUNCTIONS};
+	$pin_name=~s/I2C/$name/;
+	$scl_pin=$pin_name if $pin_name=~/_SCL$/;
+	$sda_pin=$pin_name if $pin_name=~/_SDA$/;
+        process_gpio_decl($def, $x_pin, $pin_name);
+    }
+    
+    push @{$def->{includes}}, "#include <I2C.hpp>";
+    push @{$def->{decl}}, "Platform::I2C ".$name.";";
+    push @{$def->{init}}, $name."(".$scl_pin.", ".$sda_pin.", Platform::I2C::I2C_".substr($original_name, -1, 1).")";
+}
 sub process_SPI
 {
     my ($def, $periphs, $name) = @_;
