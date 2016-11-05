@@ -121,3 +121,20 @@ Spi& Spi::txDma(bool enable) {
 		base->CR2 &= ~SPI_CR2_TXDMAEN;
 	return *this;
 }
+
+Spi& Spi::setClockPolarity(bool idle_high)
+{
+    if(idle_high)
+	base->CR1 |= SPI_CR1_CPOL;
+    else
+	base->CR1 &= ~SPI_CR1_CPOL;
+    return *this;
+}
+Spi& Spi::setDataClockPhase(bool second_edge)
+{
+    if(second_edge)
+	base->CR1 |= SPI_CR1_CPHA;
+    else
+	base->CR1 &= ~SPI_CR1_CPHA;
+    return *this;
+}
