@@ -17,19 +17,26 @@ void Spi::init() {
 }
 
 Spi::Spi(int n, DmaStream* stream):
-	n(n), dma(stream) {
+	n(n), txdma(nullptr) {
 
 	init();
-	stream->
-		peripheralFixed(true)
-		.memoryFixed(false)
-		.fifo(true)
-		.setDirection(DmaStream::M2P)
-		.peripheralControlled(false)
-		.setPeripheral(&(base->DR));
+	setTxDma(stream);
 }
 
-Spi::Spi(int n): n(n), dma(0) {
+Spi& Spi::setTxDma(DmaStream* stream)
+{
+    txdma = stream;
+    txdma->
+	peripheralFixed(true)
+	.memoryFixed(false)
+	.fifo(true)
+	.setDirection(DmaStream::M2P)
+	.peripheralControlled(false)
+	.setPeripheral(&(base->DR));
+    return *this;
+}
+
+Spi::Spi(int n): n(n), txdma(nullptr) {
 	init();
 }
 
@@ -55,7 +62,7 @@ Spi& Spi::setDivisorPow2(int v) {
 }
 
 Spi& Spi::send(char v) {
-	if(dma) {
+	if(txdma) {
 		send(&v, 1);
 		return *this;
 	}
@@ -65,16 +72,16 @@ Spi& Spi::send(char v) {
 }
 
 Spi& Spi::send(char *s, int l) {
-	if(!dma) {
+	if(!txdma) {
 		for(int i=0; i<l; ++i)
 			send(s[i]);
 		return *this;
 	}
 
-	dma->wait();
+	txdma->wait();
 	while( !(base->SR & SPI_SR_TXE));
 	txDma(true);
-	dma->
+	txdma->
 		numberOfData(l)
 		.setMemory(s)
 		.enable();

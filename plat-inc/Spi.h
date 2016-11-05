@@ -15,10 +15,9 @@ class Spi
     private:
 	int n;
 	SPI_TypeDef *base;
-
 	Spi& rxDma(bool enable=true);
 	Spi& txDma(bool enable=true);
-	DmaStream *dma;
+	DmaStream *txdma;
 
 	/** Shared initialisation routine
 	 * */
@@ -109,6 +108,8 @@ class Spi
 	 * @warning this function does not check the usefulness of the GPIO
 	 * */
 	Spi& configGpio(Gpio& io);
+	/** Set the DMA stream to use for TX operations */
+	Spi& setTxDma(DmaStream* stream);
 };
 }
 #endif /* _SPI_H */
