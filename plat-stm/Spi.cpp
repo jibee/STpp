@@ -5,15 +5,30 @@
 using namespace Platform;
 
 void Spi::init() {
-	if(n == 1) RCC->APB2ENR |= 1 << 12;
-	else if(n == 2) RCC->APB1ENR |= 1 << 14;
-	else if(n == 3) RCC->APB1ENR |= 1 << 15;
-	else while(1);
-
-	if(n == 1)
+    switch(n)
+    {
+	case 1:
+	    {
+		RCC->APB2ENR |= 1 << 12;
 		base = SPI1;
-	else while(1);
-	base->CR1 |= SPI_CR1_SSM | SPI_CR1_SSI;
+		break;
+	    }
+	case 2:
+	    {
+		RCC->APB1ENR |= 1 << 14;
+		base = SPI2;
+		break;
+	    }
+	case 3:
+	    {
+		RCC->APB1ENR |= 1 << 15;
+		base = SPI3;
+		break;
+	    }
+	default:
+	    while(1);
+    }
+    base->CR1 |= SPI_CR1_SSM | SPI_CR1_SSI;
 }
 
 Spi::Spi(int n, DmaStream* stream):
