@@ -1,20 +1,44 @@
 #include <Adc.h>
 #include <stm32f4xx.h>
+#include <stdlib.h>
 
 using namespace Platform;
 
-Adc::Adc() {
-	//Enable ADC
-	ADC1->CR2 |= ADC_CR2_ADON;
+Adc::Adc(Adc::AdcConverter converter) {
+    switch(converter)
+    {
+	case ADC_1:
+	    {
+		m_converter = ADC1;
+		RCC->APB2ENR |= 1<<8;
+		break;
+	    }
+	case ADC_2:
+	    {
+		m_converter = ADC2;
+		RCC->APB2ENR |= 1<<9;
+		break;
+	    }
+	case ADC_3:
+	    {
+		m_converter = ADC3;
+		RCC->APB2ENR |= 1<<10;
+		break;
+	    }
+	default:
+	    abort();
+    }
+    //Enable ADC
+    m_converter->CR2 |= ADC_CR2_ADON;
 
-	//Disable EOCIE
-	ADC1->CR1 &= ~ADC_CR1_EOCIE;
+    //Disable EOCIE
+    m_converter->CR1 &= ~ADC_CR1_EOCIE;
 
-	//Set TSVREFE bit
-	ADC->CCR|= ADC_CCR_TSVREFE;
+    //Set TSVREFE bit
+    ADC->CCR|= ADC_CCR_TSVREFE;
 
-	//Clock =APB1/8
-	ADC->CCR |= 2<<16;
+    //Clock =APB1/8
+    ADC->CCR |= 2<<16;
 }
 
 void Adc::setSamples(int chan, Samples s) {
@@ -39,9 +63,9 @@ void Adc::setSamples(int chan, Samples s) {
 	};
 	if(chan>9) {
 		chan-=9;
-		ADC1->SMPR1= (ADC1->SMPR1 & ~(7<<(3*chan))) | v << (3*chan);
+		m_converter->SMPR1= (m_converter->SMPR1 & ~(7<<(3*chan))) | v << (3*chan);
 	} else {
-		ADC1->SMPR2= (ADC1->SMPR2 & ~(7<<(3*chan))) | v << (3*chan);
+		m_converter->SMPR2= (m_converter->SMPR2 & ~(7<<(3*chan))) | v << (3*chan);
 }
 	}
 
@@ -51,20 +75,20 @@ unsigned int Adc::oneShot(int chan) {
 	//See procedure p267
 
 	//Only one conversion
-	ADC1->SQR1=0;
-	ADC1->SQR3=chan;
+	m_converter->SQR1=0;
+	m_converter->SQR3=chan;
 
 	//12bits
-	ADC1->CR1 &= 3 << 24;
+	m_converter->CR1 &= 3 << 24;
 
 	//Trigger
-	ADC1->CR2 |= ADC_CR2_SWSTART;
+	m_converter->CR2 |= ADC_CR2_SWSTART;
 	
 	//Wait for end of conversion
-	while( ! (ADC1->SR & ADC_SR_EOC));
+	while( ! (m_converter->SR & ADC_SR_EOC));
 	//Read data
-	unsigned int val = ADC1->DR&0xfff;
-	ADC1->CR2 &= ~ADC_CR2_SWSTART;
+	unsigned int val = m_converter->DR&0xfff;
+	m_converter->CR2 &= ~ADC_CR2_SWSTART;
 
 	return val;
 }

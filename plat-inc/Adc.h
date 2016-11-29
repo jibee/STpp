@@ -1,6 +1,8 @@
 #ifndef _ADC_H
 #define _ADC_H
 
+
+#include <stm32f4xx.h>
 namespace Platform
 {
 /**
@@ -9,8 +11,14 @@ Analog to digital converter
 */
 class Adc {
 	public:
+	    enum AdcConverter
+	    {
+		ADC_1,
+		ADC_2,
+		ADC_3
+	    };
 /** Constructor */
-		Adc();
+		Adc(Adc::AdcConverter adc);
 /** Obtains a single reading of the analog value for a given channel
 
 Note this function will block during the conversion.
@@ -49,6 +57,8 @@ tension respectively.
 		void setSamples(int chan, Samples s);
 /** Obtains the chip temperature. */
 		float getTemperature();
+	private:
+		ADC_TypeDef* m_converter;
 };
 }
 #endif /* _ADC_H */
