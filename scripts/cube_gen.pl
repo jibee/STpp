@@ -58,7 +58,7 @@ sub issue_classes
     delete $peripherals->{RCC};
     delete $peripherals->{SYS};
     my $def = {init=>[], decl=>[], cons=>[], includes=>[]};
-    foreach my $pin_name (sort keys %$unused_pins)
+    foreach my $pin_name (sort {($unused_pins->{$a}->{LABELs}||$a) cmp ($unused_pins->{$b}->{LABELs}||$b)} keys %$unused_pins)
     {
 	my $pin_def = $unused_pins->{$pin_name};
 	my $defined_name = $pin_def->{LABELs}||$pin_name;
