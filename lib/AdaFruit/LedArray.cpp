@@ -124,7 +124,7 @@ void LedArray::fill(uint32_t color)
 void LedArray::horizontalLine(uint32_t color, uint8_t line)
 {
     uint8_t scanline = line & (SCANLINES-1);
-    uint8_t foldline = (line & (SCANLINES))?12:0;
+    uint8_t foldline = (line & (SCANLINES))?0:12;
     color=color>>SKIP_LOW_WEIGHT_BITS;
     for(int i=SKIP_LOW_WEIGHT_BITS; i<BIT_PER_PIXEL; ++i)
     {
@@ -152,8 +152,8 @@ void LedArray::setPixelAt(uint32_t color, uint8_t line, uint8_t column)
     //assert(line<SCANLINES*2);
     //ASSERT(column<32);
 
-    uint8_t scanline = line & 7;
-    uint8_t foldline = (line & 8)?16:0;
+    uint8_t scanline = line & (SCANLINES-1);
+    uint8_t foldline = (line & (SCANLINES))?0:12;
     char bitMask = 1<<(column & 7);
     uint8_t b = column>>3;
 
