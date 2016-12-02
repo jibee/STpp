@@ -4,13 +4,13 @@
 using namespace AdaFruit;
 
 LedArray::LedArray(
-		   Platform::Timer& hwTimer, Platform::Spi& spi, Platform::Gpio& LAT, Platform::Gpio& OE,
-		    Platform::Gpio& A, Platform::Gpio& B, Platform::Gpio& C, Platform::Gpio& D
+	Platform::Spi& spi, Platform::Gpio& LAT, Platform::Gpio& OE,
+	Platform::Gpio& A, Platform::Gpio& B, Platform::Gpio& C, Platform::Gpio& D
 ):
-    m_hwTimer(hwTimer), m_spi(spi), m_LAT(LAT), m_OE(OE), m_A(A), m_B(B), m_C(C), m_D(D),
-m_current_pixel_weight(0), 
-m_current_scanline(0),
-m_current_pseudo_pwm_counter(0) 
+    m_spi(spi), m_LAT(LAT), m_OE(OE), m_A(A), m_B(B), m_C(C), m_D(D),
+    m_current_pixel_weight(0),
+    m_current_scanline(0),
+    m_current_pseudo_pwm_counter(0)
 {
     setOutputGPIO(m_LAT);
     setOutputGPIO(m_OE);
@@ -29,7 +29,7 @@ m_current_pseudo_pwm_counter(0)
 	.enable();
 }
 
-void LedArray::interruptHandler()
+void LedArray::tick()
 {
     m_current_pseudo_pwm_counter--;
     if(m_current_pseudo_pwm_counter<=0)
@@ -98,9 +98,9 @@ void LedArray::blank()
     fill(0x000000);
 }
 
-void LedArray::enable()
+void LedArray::setTimer(Platform::Timer& hwTimer)
 {
-    m_hwTimer
+    hwTimer
     // We need to be interrupted 102 400 times per second (25 fps, 256 PWM levels, 16 scanlines)
 	.setPrescaler(1<<SKIP_LOW_WEIGHT_BITS)
 	.setAutoReload(469)
@@ -108,9 +108,10 @@ void LedArray::enable()
 	.setUIE(true)
 	.setURS(true)
 	.setOneShot(false)
-	.setTopCB([this](int){this->interruptHandler();})
+	.setTopCB([this](int){this->tick();});
+    Platform::Irq(hwTimer.irqNr()).setPriority(15).enable();
+    hwTimer
 	.enable();
-    Platform::Irq(m_hwTimer.irqNr()).setPriority(15).enable();
 }
 
 void LedArray::fill(uint32_t color)
@@ -175,17 +176,5 @@ void LedArray::setPixelAt(uint32_t color, uint8_t line, uint8_t column)
 	color = color>>1;
     }
 }
-/*
-void LedArray::setPixelAt(uint32_t color, uint8_t line, uint8_t column)
-{
-    ASSERT(line<SCANLINES*2);
-    ASSERT(column<32);
-
-    uint8_t scanline = line & 7;
-    uint8_t foldline = (line & 8)?16:0;
-    char bitMask = 1<<(column & 7);
-
-}
-*/
 
 

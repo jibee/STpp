@@ -30,17 +30,20 @@ namespace AdaFruit
     {
 	public:
 	    LedArray(
-		    Platform::Timer& hwTimer, Platform::Spi& spi, Platform::Gpio& LAT, Platform::Gpio& OE,
+		    Platform::Spi& spi, Platform::Gpio& LAT, Platform::Gpio& OE,
 		    Platform::Gpio& A, Platform::Gpio& B, Platform::Gpio& C, Platform::Gpio& D
 		    );
 	    void setPixelAt(uint32_t color, uint8_t line, uint8_t column);
 	    void blank();
-	    void enable();
+	    void setTimer(Platform::Timer& hwTimer);
+	    // Fill the whole screen with the given color
 	    void fill(uint32_t color);
 	    void verticalLine(uint32_t color, uint8_t column);
+	    // Draws an horizontal line
 	    void horizontalLine(uint32_t color, uint8_t line);
+	    // Timer interrupt handler; called every 0.5ms to possibly update the output data
+	    void tick();
 	private:
-	    Platform::Timer& m_hwTimer;
 	    Platform::Spi& m_spi;
 	    Platform::Gpio& m_LAT;
 	    Platform::Gpio& m_OE;
@@ -61,8 +64,6 @@ namespace AdaFruit
 	    int m_current_scanline;
 	    // current position in the PWM timing; counting downward;
 	    int m_current_pseudo_pwm_counter;
-	    // Timer interrupt handler; called every 0.5ms to possibly update the output data
-	    void interruptHandler();
 	    // Switches off the led output
 	    void disableOutput();
 	    // Switches on the led output
