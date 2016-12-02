@@ -117,6 +117,12 @@ class Gpio {
 	Gpio& setAlternate(AF f);
 	/** Obtains the current output value */
 	inline operator bool() { return getState(); };
+
+	/** Sets the GPIO in standard output state */
+	Gpio& setOutput();
+	/** Sets the GPIO in standard input state */
+	Gpio& setInput();
+
     private:
 	/** GpioPort this pin belongs to */
 	GpioPort *port;

@@ -147,6 +147,21 @@ Gpio::Gpio() {
 	number = -1;
 }
 
+Gpio& Gpio::setOutput()
+{
+    setFunction(Platform::Gpio::GPIO);
+    setDirection(Platform::Gpio::OUTPUT);
+    return  *this;
+}
+
+Gpio& GPio::setInput(Platform::Gpio::Resistor weakResistor)
+{
+    setFunction(Platform::Gpio::GPIO);
+    setDirection(Platform::Gpio::INPUT);
+    setResistor(Platform::Gpio::PULL_UP);
+    return *this;
+}
+
 
 Shell& operator<<(Shell& shell, Platform::Gpio& g) {
     if(!shell.got_name) while(1);
