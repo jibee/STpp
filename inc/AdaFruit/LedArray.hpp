@@ -22,11 +22,11 @@
 #define DEVICES_ADAFRUIT_LEDARRAY_H
 
 #include <Spi.h>
-#include <Timer.h>
+#include <PseudoPWMDisplay.hpp>
 
 namespace AdaFruit
 {
-    class LedArray
+    class LedArray: public PseudoPWMDisplay
     {
 	public:
 	    LedArray(
@@ -35,14 +35,11 @@ namespace AdaFruit
 		    );
 	    void setPixelAt(uint32_t color, uint8_t line, uint8_t column);
 	    void blank();
-	    void setTimer(Platform::Timer& hwTimer);
 	    // Fill the whole screen with the given color
 	    void fill(uint32_t color);
 	    void verticalLine(uint32_t color, uint8_t column);
 	    // Draws an horizontal line
 	    void horizontalLine(uint32_t color, uint8_t line);
-	    // Timer interrupt handler; called every 0.5ms to possibly update the output data
-	    void tick();
 	private:
 	    Platform::Spi& m_spi;
 	    Platform::Gpio& m_LAT;
@@ -51,19 +48,11 @@ namespace AdaFruit
 	    Platform::Gpio& m_B;
 	    Platform::Gpio& m_C;
 	    Platform::Gpio& m_D;
-	    static const int BIT_PER_PIXEL = 8;
-	    static const int SCANLINES = 16;
 	    static const int BYTES_PER_SCANLINE = 24;
-	    static const int SKIP_LOW_WEIGHT_BITS = 4;
 
 	    char m_datalines[BIT_PER_PIXEL][SCANLINES][BYTES_PER_SCANLINE];
 
-	    // First dimension into the m_datalines
-	    int m_current_pixel_weight;
-	    // Second dimension into the scanlines
-	    int m_current_scanline;
-	    // current position in the PWM timing; counting downward;
-	    int m_current_pseudo_pwm_counter;
+	    virtual void activateFrame();
 	    // Switches off the led output
 	    void disableOutput();
 	    // Switches on the led output
@@ -72,8 +61,8 @@ namespace AdaFruit
 	    void latch();
 	    // Updates the scanline bits
 	    void updateScanLine();
-	    // Moves to the next scanline and initiates the transfer thereof
-	    void shiftNextScanline();
+	    // initiates the transfer of the current scanline
+	    virtual void transferNextFrame();
 	    // Configures the GPIO pin
 	    void setOutputGPIO(Platform::Gpio& pin);
     };    

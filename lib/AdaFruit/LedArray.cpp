@@ -1,5 +1,4 @@
 #include <AdaFruit/LedArray.hpp>
-#include <Irq.h>
 
 using namespace AdaFruit;
 
@@ -7,10 +6,7 @@ LedArray::LedArray(
 	Platform::Spi& spi, Platform::Gpio& LAT, Platform::Gpio& OE,
 	Platform::Gpio& A, Platform::Gpio& B, Platform::Gpio& C, Platform::Gpio& D
 ):
-    m_spi(spi), m_LAT(LAT), m_OE(OE), m_A(A), m_B(B), m_C(C), m_D(D),
-    m_current_pixel_weight(0),
-    m_current_scanline(0),
-    m_current_pseudo_pwm_counter(0)
+    m_spi(spi), m_LAT(LAT), m_OE(OE), m_A(A), m_B(B), m_C(C), m_D(D)
 {
     setOutputGPIO(m_LAT);
     setOutputGPIO(m_OE);
@@ -29,18 +25,16 @@ LedArray::LedArray(
 	.enable();
 }
 
-void LedArray::tick()
+void LedArray::activateFrame()
 {
-    m_current_pseudo_pwm_counter--;
-    if(m_current_pseudo_pwm_counter<=0)
-    {
-	m_current_pseudo_pwm_counter = 1<<(m_current_pixel_weight-SKIP_LOW_WEIGHT_BITS);
-	disableOutput();
-	latch();
-	updateScanLine();
-	enableOutput();
-	shiftNextScanline();
-    }
+    // Specific
+    disableOutput();
+    // Specific
+    latch();
+    // Specific
+    updateScanLine();
+    // Specific
+    enableOutput();
 }
 
 void LedArray::disableOutput()
@@ -68,18 +62,8 @@ void LedArray::updateScanLine()
     m_D=m_current_scanline&1<<3;
 }
 
-void LedArray::shiftNextScanline()
+void LedArray::transferNextFrame()
 {
-    m_current_scanline++;
-    if(m_current_scanline>=SCANLINES)
-    {
-	m_current_scanline=0;
-	m_current_pixel_weight++;
-	if(m_current_pixel_weight>=BIT_PER_PIXEL)
-	{
-	    m_current_pixel_weight=SKIP_LOW_WEIGHT_BITS;
-	}
-    }
     // initiate the DMA transfer now
     m_spi.send(m_datalines[m_current_pixel_weight][m_current_scanline], BYTES_PER_SCANLINE);
 }
@@ -87,9 +71,8 @@ void LedArray::shiftNextScanline()
 void LedArray::setOutputGPIO(Platform::Gpio& pin)
 {
     pin
-	.setDirection(Platform::Gpio::OUTPUT)
+	.setOutput()
 	.setSpeed(Platform::Gpio::SPEED_100MHz)
-	.setFunction(Platform::Gpio::GPIO)
 	.setPushPull();
 }
 
@@ -98,21 +81,6 @@ void LedArray::blank()
     fill(0x000000);
 }
 
-void LedArray::setTimer(Platform::Timer& hwTimer)
-{
-    hwTimer
-    // We need to be interrupted 102 400 times per second (25 fps, 256 PWM levels, 16 scanlines)
-	.setPrescaler(1<<SKIP_LOW_WEIGHT_BITS)
-	.setAutoReload(469)
-	.setCounter(469)
-	.setUIE(true)
-	.setURS(true)
-	.setOneShot(false)
-	.setTopCB([this](int){this->tick();});
-    Platform::Irq(hwTimer.irqNr()).setPriority(15).enable();
-    hwTimer
-	.enable();
-}
 
 void LedArray::fill(uint32_t color)
 {
