@@ -121,7 +121,9 @@ class Gpio {
 	/** Sets the GPIO in standard output state */
 	Gpio& setOutput();
 	/** Sets the GPIO in standard input state */
-	Gpio& setInput();
+	Gpio& setInput(Platform::Gpio::Resistor weakResistor = Platform::Gpio::NONE);
+	/** Obtains the ADC channel mapped on this pin. Will abort if the pin does not support ADC measurements */
+	int getAdcChannel() const;
 
     private:
 	/** GpioPort this pin belongs to */
