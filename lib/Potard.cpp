@@ -1,18 +1,17 @@
 #include "Potard.hpp"
 
-Potard::Potard(Platform::Adc& adc, int channel): adc(adc), channel(channel)
+Potard::Potard(Platform::Adc& adc, int channel): AdcChannel(adc, channel)
 {
     init();
 }
 
-Potard::Potard(Platform::Adc& adc, Platform::Gpio& pin): adc(adc), channel(pin.getAdcChannel())
+Potard::Potard(Platform::Adc& adc, Platform::Gpio& pin): AdcChannel(adc, pin)
 {
     init();
 }
 
 void Potard::init()
 {
-    adc.setSamples(channel, Platform::Adc::N_480);
     measured_min = 0x0fffffff;
     measured_max = 0;
     effective_min = 0;
@@ -20,10 +19,7 @@ void Potard::init()
     using_measured = true;
 }
 
-unsigned int Potard::rawMeasure()
-{
-    return adc.oneShot(channel);
-}
+
 
 float Potard::getPosition()
 {
