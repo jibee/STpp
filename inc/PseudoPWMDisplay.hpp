@@ -2,7 +2,8 @@
 #define PSEUDOPWMDISPLAY_HPP
 
 #include <Timer.h>
-class PseudoPWMDisplay
+#include <IPowerSavingDevice.hpp>
+class PseudoPWMDisplay: public IPowerSavingDevice
 {
     public:
 	PseudoPWMDisplay();
@@ -10,6 +11,9 @@ class PseudoPWMDisplay
 	// Timer interrupt handler; called every 0.5ms to possibly update the output data
 	void tick();
 	void setTimer(Platform::Timer& hwTimer);
+	virtual void enterActiveMode();
+	virtual void enterSleepMode();
+	virtual void enterIdleMode();
     protected:
 	static const int BIT_PER_PIXEL = 8;
 	static const int SCANLINES = 16;
@@ -27,6 +31,10 @@ class PseudoPWMDisplay
 	virtual void activateFrame()=0;
 	// initiates the transfer of the current scanline
 	virtual void transferNextFrame()=0;
+	enum Component { Red, Green, Blue };
+	static bool colorHasComponent(uint32_t color, Component component, int weight);
+	bool m_active;
+	bool m_idle;
 };
 
 #endif /* PSEUDOPWMDISPLAY_HPP */

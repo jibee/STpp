@@ -45,7 +45,7 @@ void LedArray::disableOutput()
 
 void LedArray::enableOutput()
 {
-    m_OE=false;
+    m_OE=!m_active;
 }
 
 void LedArray::latch()
@@ -143,6 +143,12 @@ void LedArray::setPixelAt(uint32_t color, uint8_t line, uint8_t column)
 	    m_datalines[i][scanline][8+b+foldline]&=~bitMask;
 	color = color>>1;
     }
+}
+
+void LedArray::enterSleepMode()
+{
+    PseudoPWMDisplay::enterSleepMode();
+    disableOutput();
 }
 
 

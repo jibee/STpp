@@ -40,6 +40,8 @@ namespace AdaFruit
 	    void verticalLine(uint32_t color, uint8_t column);
 	    // Draws an horizontal line
 	    void horizontalLine(uint32_t color, uint8_t line);
+	    virtual void enterSleepMode();
+
 	private:
 	    Platform::Spi& m_spi;
 	    Platform::Gpio& m_LAT;
@@ -50,7 +52,7 @@ namespace AdaFruit
 	    Platform::Gpio& m_D;
 	    static const int BYTES_PER_SCANLINE = 24;
 
-	    char m_datalines[BIT_PER_PIXEL][SCANLINES][BYTES_PER_SCANLINE];
+	    char m_datalines[BIT_PER_PIXEL][SCANLINES][BYTES_PER_SCANLINE] ;
 
 	    virtual void activateFrame();
 	    // Switches off the led output
