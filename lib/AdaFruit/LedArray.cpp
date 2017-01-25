@@ -65,7 +65,8 @@ void LedArray::updateScanLine()
 void LedArray::transferNextFrame()
 {
     // initiate the DMA transfer now
-    m_spi.send(m_datalines[m_current_pixel_weight][m_current_scanline], BYTES_PER_SCANLINE);
+    if(m_idle && m_current_pixel_weight==(BIT_PER_PIXEL-1)) return;
+    m_spi.send(m_datalines[m_current_pixel_weight+(m_idle?1:0)][m_current_scanline], BYTES_PER_SCANLINE);
 }
 
 void LedArray::setOutputGPIO(Platform::Gpio& pin)
