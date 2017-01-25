@@ -3,16 +3,24 @@
 #include <task.h>
 
 void *__dso_handle = 0;
-void call_constructors() {
-	extern unsigned long __init_array_start;
-	extern unsigned long __init_array_end;
-	unsigned long *ptr;
-	typedef void (*fptr)();
-	fptr p;
-	for (ptr = &__init_array_start; ptr < &__init_array_end; ++ptr) {
-		p = (fptr)(*ptr);
-		p();
-	}
+
+void call_init_array( void(*start[])(), void(*end[])())
+{
+    size_t count = end - start;
+    for(size_t i=0; i<count; ++i)
+    {
+	start[i]();
+    }
+}
+
+void call_constructors()
+{
+    extern void (*__preinit_array_start []) (void) __attribute__((weak));
+    extern void (*__preinit_array_end []) (void) __attribute__((weak));
+    extern void (*__init_array_start []) (void) __attribute__((weak));
+    extern void (*__init_array_end []) (void) __attribute__((weak));
+    call_init_array(__preinit_array_start, __preinit_array_end);
+    call_init_array(__init_array_start, __init_array_end);
 }
 
 extern int main(void);

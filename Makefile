@@ -34,7 +34,7 @@ ASFLAGS:=$(CXXFLAGS)
 #LDLIBS:=$(shell $(PREFIX)gcc -print-libgcc-file-name)
 CXXFLAGS+=-Iinc -Ishell/inc -Idrivers/inc -Iplat-inc $(FREERTOS_INC) $(STM32_INC) $(USB_INC) -Wall -fno-stack-protector -O3 -DARM_MATH_CM4 -D__FPU_PRESENT=1 $(ARCH_CFLAGS) -fdata-sections -ffunction-sections -Werror -Wextra
 CXXFLAGS+=-Wno-deprecated-declarations
-CFLAGS:=$(CXXFLAGS)
+CFLAGS:=$(CXXFLAGS) -std=c11
 CXXFLAGS+=-fno-rtti -fno-exceptions -std=c++11 -fno-threadsafe-statics
 
 LIB_SRC=$(wildcard lib/*.cpp) $(wildcard lib/*.c)
