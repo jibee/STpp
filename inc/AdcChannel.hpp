@@ -24,18 +24,51 @@
 #include <Adc.h>
 #include <Gpio.h>
 
+/** Single pin ADC channel.
+ * 
+ * Gpio pin;
+ * ADC adc;
+ * AdcChannel channel = AdcChannel(adc, pin);
+ * unsigned int measure = channel.rawMeasure();
+ *
+ * The STM32 line of MCU has a limited (2 or so) number of Analog/Digital
+ * Converters. However, it is unlikely one would use them simulataneously at
+ * their full rate. Therefore, to save device space (and cost) multiple pins
+ * can be connected to a single ADC.
+ * However obtaining an anaolg measure on a given pin requires setting up two
+ * devices to collaborate (ADC and GPIO) and retaining certain configuration
+ * details for each conversion.
+ *
+ * Instances of this class provide a convenience layer on this model, by
+ * linking a GPIO pin and an ADC so that the pin is properly setup and the
+ * ugly details of connecting the ADC channel are hidden away from you.
+*/
 class AdcChannel
 {
-public:
-    AdcChannel(Platform::Adc& adc, int adc_channel);
-    AdcChannel(Platform::Adc& adc, Platform::Gpio& pin);
-    unsigned int rawMeasure();
-    
-private:
-    void init();
-    Platform::Adc& adc;
-    int channel;
- 
+    public:
+	/** Low level constructor
+	 *
+	 * The use of this constructor is discouraged, and only relevant to monitor the
+	 * internal analog channels (temperature, power supply voltage)
+	 * It is your responsibility to properly setup the GPIO to ANALOG INPUT
+	 * 
+	 * @param adc ADC device to employ for conversions
+	 * @param adc_channel channel of the ADC to monitor
+	 * */
+	AdcChannel(Platform::Adc& adc, int adc_channel);
+	/** Configures a GPIO as Analog using the given ADC.
+	 *
+	 * @param adc ADC device to employ for conversions
+	 * @param pin GPIO pin to connnect into
+	 */
+	AdcChannel(Platform::Adc& adc, Platform::Gpio& pin);
+	/** Obtains the measure from the relevant ADC channel */
+	unsigned int rawMeasure();
+
+    private:
+	void init();
+	Platform::Adc& adc;
+	int channel;
 };
 
 #endif // ADCCHANNEL_H
