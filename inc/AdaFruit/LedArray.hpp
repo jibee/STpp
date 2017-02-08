@@ -23,10 +23,11 @@
 
 #include <Spi.h>
 #include <PseudoPWMDisplay.hpp>
+#include "Adafruit_GFX.h"
 
 namespace AdaFruit
 {
-    class LedArray: public PseudoPWMDisplay
+    class LedArray: public PseudoPWMDisplay, Adafruit_GFX
     {
 	public:
 	    LedArray(
@@ -41,7 +42,8 @@ namespace AdaFruit
 	    // Draws an horizontal line
 	    void horizontalLine(uint32_t color, uint8_t line);
 	    virtual void enterSleepMode();
-
+	    // Adafruit GFX compatibility layer
+	    virtual void drawPixel(int16_t x, int16_t y, uint16_t color);
 	private:
 	    Platform::Spi& m_spi;
 	    Platform::Gpio& m_LAT;

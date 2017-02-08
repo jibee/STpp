@@ -1,0 +1,3 @@
+[submodule "3rdparty/Adafruit-GFX-Library"]
+	path = 3rdparty/Adafruit-GFX-Library
+	url = https://github.com/adafruit/Adafruit-GFX-Library.git

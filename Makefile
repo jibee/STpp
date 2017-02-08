@@ -1,4 +1,5 @@
 STM32_INC=-I3rdparty/CMSIS/Include/
+ADAFRUIT_INC=-I3rdparty/Adafruit-GFX-Library/
 FREERTOS_BASE=3rdparty/FreeRTOS/Source
 FREERTOS_INC=-I$(FREERTOS_BASE)/include/ -I$(FREERTOS_BASE)/portable/GCC/ARM_CM4F/
 FREERTOS_SRCS+=$(FREERTOS_BASE)/tasks.c
@@ -32,12 +33,16 @@ endif
 
 ASFLAGS:=$(CXXFLAGS)
 #LDLIBS:=$(shell $(PREFIX)gcc -print-libgcc-file-name)
-CXXFLAGS+=-Iinc -Ishell/inc -Idrivers/inc -Iplat-inc $(FREERTOS_INC) $(STM32_INC) $(USB_INC) -Wall -fno-stack-protector -O3 -DARM_MATH_CM4 -D__FPU_PRESENT=1 $(ARCH_CFLAGS) -fdata-sections -ffunction-sections -Werror -Wextra
+CXXFLAGS+=-Iinc -Ishell/inc -Idrivers/inc -Iplat-inc $(FREERTOS_INC) $(STM32_INC) $(USB_INC) $(ADAFRUIT_INC) -Wall -fno-stack-protector -Os -g3 -DARM_MATH_CM4 -D__FPU_PRESENT=1 $(ARCH_CFLAGS) -fdata-sections -ffunction-sections -Werror -Wextra
 CXXFLAGS+=-Wno-deprecated-declarations
 CFLAGS:=$(CXXFLAGS) -std=c11
 CXXFLAGS+=-fno-rtti -fno-exceptions -std=c++11 -fno-threadsafe-statics
 
-LIB_SRC=$(wildcard lib/*.cpp) $(wildcard lib/*.c)
+GFX_SRC = $(wildcard 3rdparty/Adafruit-GFX-Library/*.cpp)
+GFX_OBJS=$(subst cpp,o,$(GFX_SRC))
+
+LIB_SRC=$(wildcard lib/*.cpp) $(wildcard lib/*.c) $(wildcard lib/AdaFruit/*.cpp) $(GFX_SRC)
+
 LIB_OBJS=$(subst cpp,o,$(LIB_SRC)) lib/debug.o
 LIB_OBJS:=$(subst .c,.o,$(LIB_OBJS))
 LIB_INCS=$(wildcard inc/*.h)
@@ -73,6 +78,7 @@ BAD_FILES+=3rdparty/STM32_USB-Host-Device_Lib_V2.1.0/Libraries/STM32_USB_HOST_Li
 BAD_FILES+=3rdparty/STM32_USB-Host-Device_Lib_V2.1.0/Libraries/STM32_USB_HOST_Library//Core/src/usbh_hcs.o
 BAD_FILES+=3rdparty/STM32_USB-Host-Device_Lib_V2.1.0/Libraries/STM32_USB_HOST_Library//Core/src/usbh_ioreq.o
 $(BAD_FILES): CFLAGS+=-Wno-sign-compare -Wno-strict-aliasing -Wno-unused-parameter
+$(GFX_OBJS): CXXFLAGS+=-Wno-sign-compare -Wno-strict-aliasing -Wno-unused-parameter -Wno-unused-variable
 
 OBJS=$(PLAT_OBJS) $(FREERTOS_OBJS) $(USB_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS) $(LIB_OBJS)
 

@@ -6,6 +6,7 @@ LedArray::LedArray(
 	Platform::Spi& spi, Platform::Gpio& LAT, Platform::Gpio& OE,
 	Platform::Gpio& A, Platform::Gpio& B, Platform::Gpio& C, Platform::Gpio& D
 ):
+    Adafruit_GFX(32, 32),
     m_spi(spi), m_LAT(LAT), m_OE(OE), m_A(A), m_B(B), m_C(C), m_D(D)
 {
     setOutputGPIO(m_LAT);
@@ -152,4 +153,23 @@ void LedArray::enterSleepMode()
     disableOutput();
 }
 
+// Demote 8/8/8 to Adafruit_GFX 5/6/5
+// If no gamma flag passed, assume linear color
+uint16_t Color888(uint8_t r, uint8_t g, uint8_t b) {
+  return ((uint16_t)(r & 0xF8) << 8) | ((uint16_t)(g & 0xFC) << 3) | (b >> 3);
+}
+
+uint32_t fromColor565(uint16_t c)
+{
+// R: bits 15 to 11 (inc) moved to bits 23 to 16 with 3 bits of padding
+// G: bits 10 to 5 (inc) moved to bits 15 to 8 with 2 bits of padding
+// B: bits 4 to 0 (inc) moved to bits 7 to 0 with 3 bits of padding
+    return ((c & 0xF800) << 8) | ((c & 0x07E0) << 5) | ((c & 0x1F) << 3);
+}
+
+// Adafruit GFX compatibility layer
+void LedArray::drawPixel(int16_t x, int16_t y, uint16_t color)
+{
+    setPixelAt(fromColor565(color), x, y);
+}
 
