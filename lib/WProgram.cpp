@@ -23,8 +23,19 @@ void free(void *)
     abort();
 }
 
-size_t Print::print(const char*)
+size_t Print::print(const char* text)
 {
-    abort();
+    size_t len = strlen(text);
+    for(size_t i=0; i<len; ++i)
+    {
+	print(text[i]);
+    }
+    return len;
+}
+
+size_t Print::print(char c)
+{
+    write(c);
+    return 1;
 }
 
