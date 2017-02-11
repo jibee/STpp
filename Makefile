@@ -1,7 +1,7 @@
-STM32_INC=-I3rdparty/CMSIS/Include/
-ADAFRUIT_INC=-I3rdparty/Adafruit-GFX-Library/
-FREERTOS_BASE=3rdparty/FreeRTOS/Source
-FREERTOS_INC=-I$(FREERTOS_BASE)/include/ -I$(FREERTOS_BASE)/portable/GCC/ARM_CM4F/
+# STpp library main build file
+# Will build the STpp library and examples too
+include stpp.mk
+
 FREERTOS_SRCS+=$(FREERTOS_BASE)/tasks.c
 FREERTOS_SRCS+=$(FREERTOS_BASE)/timers.c
 FREERTOS_SRCS+=$(FREERTOS_BASE)/queue.c
@@ -10,38 +10,16 @@ FREERTOS_SRCS+=$(FREERTOS_BASE)/list.c
 FREERTOS_SRCS+=$(FREERTOS_BASE)/portable/GCC/ARM_CM4F/port.c
 FREERTOS_OBJS=$(subst .c,.o,$(FREERTOS_SRCS))
 
-HOST_ARCH=$(shell arch)
-PLAT?=stm
-ifeq ($(PLAT),stm)
-include usb.mk
-ARCH_CFLAGS=-DARCH=stm -fshort-double
-ifeq ($(HOST_ARCH),armv7l)
-	PREFIX=
-endif
-PREFIX?=arm-none-eabi-
+
 SRC:=$(wildcard src/*.c) $(wildcard src/*.s)
 SRC_OBJS:=$(subst .c,.o,$(SRC))
 SRC_OBJS:=$(subst .s,.o,$(SRC_OBJS))
-CXXFLAGS=-mcpu=cortex-m4 -g -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-LDFLAGS=
-else
-ARCH_CFLAGS=-DARCH=unix
-CXXFLAGS=-g
-FREERTOS_OBJS=
-LDFLAGS=-lpthread
-endif
-
-ASFLAGS:=$(CXXFLAGS)
-#LDLIBS:=$(shell $(PREFIX)gcc -print-libgcc-file-name)
-CXXFLAGS+=-Iinc -Ishell/inc -Idrivers/inc -Iplat-inc $(FREERTOS_INC) $(STM32_INC) $(USB_INC) $(ADAFRUIT_INC) -Wall -fno-stack-protector -Os -g3 -DARM_MATH_CM4 -D__FPU_PRESENT=1 $(ARCH_CFLAGS) -fdata-sections -ffunction-sections -Werror -Wextra
-CXXFLAGS+=-Wno-deprecated-declarations
-CFLAGS:=$(CXXFLAGS) -std=c11
-CXXFLAGS+=-fno-rtti -fno-exceptions -std=c++11 -fno-threadsafe-statics
 
 GFX_SRC = $(wildcard 3rdparty/Adafruit-GFX-Library/*.cpp)
 GFX_OBJS=$(subst cpp,o,$(GFX_SRC))
 
 LIB_SRC=$(wildcard lib/*.cpp) $(wildcard lib/*.c) $(wildcard lib/AdaFruit/*.cpp) $(GFX_SRC)
+LIB_SRC+=AnatoleBox/Box.cpp AnatoleBox/RGBLedArray.cpp AnatoleBox/AnatoleBox.cpp
 
 LIB_OBJS=$(subst cpp,o,$(LIB_SRC)) lib/debug.o
 LIB_OBJS:=$(subst .c,.o,$(LIB_OBJS))
@@ -56,17 +34,6 @@ PLAT_SRC=$(wildcard plat-$(PLAT)/*.cpp)
 PLAT_OBJS=$(subst cpp,o,$(PLAT_SRC))
 PLAT_INCS=$(wildcard plat-inc/*.h)
 
-CC=$(PREFIX)gcc
-CXX=$(PREFIX)gcc
-LD=$(PREFIX)ld
-AS=$(PREFIX)as
-
-TARGETS:=led capa button timer ledstrip lidar motor dumpLcd incrementalEncoder irremote remote rotaryCounter
-CHERRY_PICKER_TARGETS:=cherryPicker/shell cherryPicker/BacAFruitsBT cherryPicker/BacAFruits cherryPicker/ax12 cherryPicker/lcd cherryPicker/nfc cherryPicker/srf02
-EXECS:=$(addprefix examples/,$(TARGETS))
-ifeq ($(PLAT),stm)
-EXECS:=$(addsuffix .flash,$(EXECS)) $(addsuffix .ram,$(EXECS))
-endif
 
 BAD_FILES:=3rdparty/STM32_USB-Host-Device_Lib_V2.1.0/Libraries/STM32_USB_OTG_Driver//src/usb_core.o lib/arm_sin_cos_f32.o
 BAD_FILES+=3rdparty/STM32_USB-Host-Device_Lib_V2.1.0/Libraries/STM32_USB_OTG_Driver//src/usb_dcd_int.o
@@ -80,7 +47,30 @@ BAD_FILES+=3rdparty/STM32_USB-Host-Device_Lib_V2.1.0/Libraries/STM32_USB_HOST_Li
 $(BAD_FILES): CFLAGS+=-Wno-sign-compare -Wno-strict-aliasing -Wno-unused-parameter
 $(GFX_OBJS): CXXFLAGS+=-Wno-sign-compare -Wno-strict-aliasing -Wno-unused-parameter -Wno-unused-variable
 
-OBJS=$(PLAT_OBJS) $(FREERTOS_OBJS) $(USB_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS) $(LIB_OBJS)
+OBJS=$(PLAT_OBJS) $(FREERTOS_OBJS) $(USB_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS) $(LIB_OBJS) $(SRC_OBJS)
+
+lib/%.o: lib/%.cpp $(LIB_INCS) $(PLAT_INCS) $(DRIVER_INCS)
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
+
+drivers/%.o: drivers/%.cpp $(DRIVERS_INCS) $(PLAT_INCS)
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
+
+ifeq ($(PLAT),stm)
+libSTpp.a: $(OBJS)
+	ar rcs $@ $^
+else
+examples/%: examples/%.o $(OBJS)
+	g++ $^ -o $@ $(LDFLAGS)
+endif
+
+
+TARGETS:=led capa button timer ledstrip lidar motor dumpLcd incrementalEncoder irremote remote rotaryCounter
+CHERRY_PICKER_TARGETS:=cherryPicker/shell cherryPicker/BacAFruitsBT cherryPicker/BacAFruits cherryPicker/ax12 cherryPicker/lcd cherryPicker/nfc cherryPicker/srf02
+EXECS:=$(addprefix examples/,$(TARGETS))
+EXECS+=$(ANATOLEBOX_TARGETS)
+ifeq ($(PLAT),stm)
+EXECS:=$(addsuffix .flash,$(EXECS)) $(addsuffix .ram,$(EXECS))
+endif
 
 all: $(EXECS) 
 
@@ -89,30 +79,9 @@ doc:
 
 .SECONDARY: $(LIB_OBJS) $(FREERTOS_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS) $(EXECS)
 
-lib/%.o: lib/%.cpp $(LIB_INCS) $(PLAT_INCS) $(DRIVER_INCS)
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
-
-drivers/%.o: drivers/%.cpp $(DRIVERS_INCS) $(PLAT_INCS)
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
-
-STPP_LIB = libSTpp.a
 CHERRYPICKER_LIB = examples/cherryPicker/CherryPickerBoard.o
 
 $(CHERRY_PICKER_TARGETS): LDLIBS+=$(CHERRY_PICKER_TARGETS)
-
-ifeq ($(PLAT),stm)
-libSTpp.a: $(OBJS)
-	ar rcs $@ $^
-
-%.ram: %.o $(SRC_OBJS) $(STPP_LIB)
-	$(LD) $^ -o $@ $(LDFLAGS) -Tsrc/ram.lds $(LDLIBS)
-
-%.flash: %.o $(SRC_OBJS) $(STPP_LIB)
-	$(LD) $^ -o $@ $(LDFLAGS) -Tsrc/flash.lds $(LDLIBS)
-else
-examples/%: examples/%.o $(OBJS)
-	g++ $^ -o $@ $(LDFLAGS)
-endif
 
 clean:
 	-rm -f examples/*.flash examples/*.ram examples/cherryPicker/*.flash examples/cherryPicker/*.ram libSTpp.a $(FREERTOS_OBJS) $(LIB_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS)
