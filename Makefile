@@ -1,3 +1,6 @@
+all: libSTpp.a examples_dir
+
+
 # STpp library main build file
 # Will build the STpp library and examples too
 include stpp.mk
@@ -19,7 +22,6 @@ GFX_SRC = $(wildcard 3rdparty/Adafruit-GFX-Library/*.cpp)
 GFX_OBJS=$(subst cpp,o,$(GFX_SRC))
 
 LIB_SRC=$(wildcard lib/*.cpp) $(wildcard lib/*.c) $(wildcard lib/AdaFruit/*.cpp) $(GFX_SRC)
-LIB_SRC+=AnatoleBox/Box.cpp AnatoleBox/RGBLedArray.cpp AnatoleBox/AnatoleBox.cpp
 
 LIB_OBJS=$(subst cpp,o,$(LIB_SRC)) lib/debug.o
 LIB_OBJS:=$(subst .c,.o,$(LIB_OBJS))
@@ -64,24 +66,21 @@ examples/%: examples/%.o $(OBJS)
 endif
 
 
-TARGETS:=led capa button timer ledstrip lidar motor dumpLcd incrementalEncoder irremote remote rotaryCounter
-CHERRY_PICKER_TARGETS:=cherryPicker/shell cherryPicker/BacAFruitsBT cherryPicker/BacAFruits cherryPicker/ax12 cherryPicker/lcd cherryPicker/nfc cherryPicker/srf02
 EXECS:=$(addprefix examples/,$(TARGETS))
-EXECS+=$(ANATOLEBOX_TARGETS)
 ifeq ($(PLAT),stm)
 EXECS:=$(addsuffix .flash,$(EXECS)) $(addsuffix .ram,$(EXECS))
 endif
 
-all: $(EXECS) 
+.PHONY: examples_dir
+
+examples_dir:
+	$(MAKE) -C examples all
 
 doc:
 	doxygen
 
 .SECONDARY: $(LIB_OBJS) $(FREERTOS_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS) $(EXECS)
 
-CHERRYPICKER_LIB = examples/cherryPicker/CherryPickerBoard.o
-
-$(CHERRY_PICKER_TARGETS): LDLIBS+=$(CHERRY_PICKER_TARGETS)
-
 clean:
-	-rm -f examples/*.flash examples/*.ram examples/cherryPicker/*.flash examples/cherryPicker/*.ram libSTpp.a $(FREERTOS_OBJS) $(LIB_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS)
+	-rm -f libSTpp.a $(FREERTOS_OBJS) $(LIB_OBJS) $(SRC_OBJS) $(USB_OBJS) $(PLAT_OBJS) $(DRIVERS_OBJS) $(SHELL_OBJS)
+	$(MAKE) -C examples clean

@@ -41,7 +41,7 @@ STPP_LIB = $(BASEDIR)libSTpp.a
 
 # These meta targets are used to build actual STM32 binaries
 %.ram: %.o $(STPP_LIB)
-	$(LD) $^ -o $@ $(LDFLAGS) -T$(BASEDIR)src/ram.lds $(LDLIBS)
+	$(LD) $^ $(STPP_LIB) -o $@ $(LDFLAGS) -T$(BASEDIR)src/ram.lds $(LDLIBS)
 
 %.flash: %.o $(STPP_LIB)
-	$(LD) $^ -o $@ $(LDFLAGS) -T$(BASEDIR)src/flash.lds $(LDLIBS)
+	$(LD) $^ $(STPP_LIB) -o $@ $(LDFLAGS) -T$(BASEDIR)src/flash.lds $(LDLIBS)
