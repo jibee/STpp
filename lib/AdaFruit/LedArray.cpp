@@ -120,6 +120,9 @@ void LedArray::horizontalLine(uint32_t color, uint8_t line)
 
 void LedArray::setPixelAt(uint32_t color, uint8_t line, uint8_t column)
 {
+    // Some GFX libraries tend to draw off the bitmap. We truncate here.
+    if(line>=SCANLINES*2) return;
+    if(column>=32) return;
     //assert(line<SCANLINES*2);
     //ASSERT(column<32);
 
@@ -155,8 +158,13 @@ void LedArray::enterSleepMode()
 
 // Demote 8/8/8 to Adafruit_GFX 5/6/5
 // If no gamma flag passed, assume linear color
-uint16_t Color888(uint8_t r, uint8_t g, uint8_t b) {
+uint16_t LedArray::Color888(uint8_t r, uint8_t g, uint8_t b) {
   return ((uint16_t)(r & 0xF8) << 8) | ((uint16_t)(g & 0xFC) << 3) | (b >> 3);
+}
+
+uint16_t LedArray::Color24(uint32_t rgb)
+{
+    return Color888((rgb>>16) & 0xFF, (rgb>>8) & 0xFF, rgb & 0xFF);
 }
 
 uint32_t fromColor565(uint16_t c)
@@ -170,6 +178,6 @@ uint32_t fromColor565(uint16_t c)
 // Adafruit GFX compatibility layer
 void LedArray::drawPixel(int16_t x, int16_t y, uint16_t color)
 {
-    setPixelAt(fromColor565(color), x, y);
+    setPixelAt(fromColor565(color), y, x);
 }
 

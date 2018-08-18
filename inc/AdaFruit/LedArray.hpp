@@ -27,7 +27,7 @@
 
 namespace AdaFruit
 {
-    class LedArray: public PseudoPWMDisplay, Adafruit_GFX
+    class LedArray: public PseudoPWMDisplay, public Adafruit_GFX
     {
 	public:
 	    LedArray(
@@ -44,6 +44,8 @@ namespace AdaFruit
 	    virtual void enterSleepMode();
 	    // Adafruit GFX compatibility layer
 	    virtual void drawPixel(int16_t x, int16_t y, uint16_t color);
+	    static uint16_t Color888(uint8_t r, uint8_t g, uint8_t b);
+	    static uint16_t Color24(uint32_t rgb);
 	private:
 	    Platform::Spi& m_spi;
 	    Platform::Gpio& m_LAT;
