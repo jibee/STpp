@@ -34,23 +34,23 @@ DmaStream::DmaStream(DMAController dmaId, Stream streamId, Channel channel): str
     vSemaphoreCreateBinary(dmaSem[dmaId-1][streamId]);
     xSemaphoreTake(dmaSem[dmaId-1][streamId], 0);
     /** Enable the power supply for the DMA controller */
-    if(dmaId == 1) RCC->AHB1ENR |= 1 << 21;
-    else if(dmaId == 2) RCC->AHB1ENR |= 1 << 22;
-    else while(1);
+    if(DMAController1 == dmaId) RCC->AHB1ENR |= 1 << 21;
+    else if(DMAController2 == dmaId) RCC->AHB1ENR |= 1 << 22;
+    else abort();
 
-    if(dmaId==1)
+    if(DMAController1 == dmaId)
 	dma = DMA1;
-    else if(dmaId==2)
+    else if(DMAController2 == dmaId)
 	dma = DMA2;
-    else while(1);
+    else abort();
     switch(streamId) {
-	case 0: case 1: case 2: case 3:
-	case 4: case 5: case 6: case 7:
+	case S0: case S1: case S2: case S3:
+	case S4: case S5: case S6: case S7:
 	    /// @smell Berk pointer arithmetics
 	    stream = (DMA_Stream_TypeDef*)( (char*)dma + 0x10 + 0x18 * streamId);
 	    break;
 	default:
-	    while(1);
+	    abort();
 	    break;
     }
 
@@ -66,20 +66,19 @@ DmaStream::DmaStream(DMAController dmaId, Stream streamId, Channel channel): str
 
 int DmaStream::irqNr()
 {
-    if(dmaId == 1) {
-	if(streamId <= 6)
+    if(DMAController1 == dmaId) {
+	if(streamId <= S6)
 	    return 11 + streamId;
-	if(streamId == 7)
+	if(S7 == streamId)
 	    return DMA1_Stream7_IRQn;
-	while(1);
-    } else if(dmaId == 2) {
-	if(streamId <= 4)
+	abort();
+    } else if(DMAController2 == dmaId) {
+	if(streamId <= S4)
 	    return DMA2_Stream0_IRQn + streamId;
-	if(streamId <= 7)
+	if(streamId <= S7)
 	    return DMA2_Stream5_IRQn + streamId-5;
-	while(1);
-    } else while(1);
-
+	abort();
+    } else abort();
     return 0;
 }
 
@@ -127,7 +126,7 @@ DmaStream& DmaStream::setDirection(direction d)
 	    stream->CR |= 2<<6;
 	    break;
 	default:
-	    while(1);
+	    abort();
 	    break;
     }
 
@@ -156,13 +155,13 @@ DmaStream& DmaStream::enable()
 {
     setCurrent(currentBuf == 0);
     /* clears the interrupt state */
-    if(streamId < 4)
-	if(streamId < 2)
+    if(streamId < S4)
+	if(streamId < S2)
 	    dma->LIFCR = 0x1f << (6*streamId);
 	else
 	    dma->LIFCR = 0x1f << (6*streamId+4);
     else
-	if(streamId < 6)
+	if(streamId <S6)
 	    dma->HIFCR = 0x1f << (6*(streamId-4));
 	else
 	    dma->HIFCR = 0x1f << (6*(streamId-4)+4);
@@ -213,7 +212,7 @@ DmaStream& DmaStream::fifo(bool enabled)
     return *this;
 }
 
-static void irq_handler(DMA_TypeDef *dmab, int dma, int stream)
+static void irq_handler(DMA_TypeDef *dmab, Platform::DmaStream::DMAController dma, Platform::DmaStream::Stream stream)
 {
     long v;
     xSemaphoreGiveFromISR(dmaSem[dma-1][stream], &v);
@@ -222,20 +221,20 @@ static void irq_handler(DMA_TypeDef *dmab, int dma, int stream)
     dmab->LIFCR = 0xffffffff;
 }
 
-void DMA1_Stream0_IRQHandler() { irq_handler(DMA1, 1, 0); }
-void DMA1_Stream1_IRQHandler() { irq_handler(DMA1, 1, 1); }
-void DMA1_Stream2_IRQHandler() { irq_handler(DMA1, 1, 2); }
-void DMA1_Stream3_IRQHandler() { irq_handler(DMA1, 1, 3); }
-void DMA1_Stream4_IRQHandler() { irq_handler(DMA1, 1, 4); }
-void DMA1_Stream5_IRQHandler() { irq_handler(DMA1, 1, 5); }
-void DMA1_Stream6_IRQHandler() { irq_handler(DMA1, 1, 6); }
-void DMA1_Stream7_IRQHandler() { irq_handler(DMA1, 1, 7); }
+void DMA1_Stream0_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S0); }
+void DMA1_Stream1_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S1); }
+void DMA1_Stream2_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S2); }
+void DMA1_Stream3_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S3); }
+void DMA1_Stream4_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S4); }
+void DMA1_Stream5_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S5); }
+void DMA1_Stream6_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S6); }
+void DMA1_Stream7_IRQHandler() { irq_handler(DMA1, Platform::DmaStream::DMAController1, Platform::DmaStream::S7); }
 
-void DMA2_Stream0_IRQHandler() { irq_handler(DMA2, 2, 0); }
-void DMA2_Stream1_IRQHandler() { irq_handler(DMA2, 2, 1); }
-void DMA2_Stream2_IRQHandler() { irq_handler(DMA2, 2, 2); }
-void DMA2_Stream3_IRQHandler() { irq_handler(DMA2, 2, 3); }
-void DMA2_Stream4_IRQHandler() { irq_handler(DMA2, 2, 4); }
-void DMA2_Stream5_IRQHandler() { irq_handler(DMA2, 2, 5); }
-void DMA2_Stream6_IRQHandler() { irq_handler(DMA2, 2, 6); }
-void DMA2_Stream7_IRQHandler() { irq_handler(DMA2, 2, 7); }
+void DMA2_Stream0_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S0); }
+void DMA2_Stream1_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S1); }
+void DMA2_Stream2_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S2); }
+void DMA2_Stream3_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S3); }
+void DMA2_Stream4_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S4); }
+void DMA2_Stream5_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S5); }
+void DMA2_Stream6_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S6); }
+void DMA2_Stream7_IRQHandler() { irq_handler(DMA2, Platform::DmaStream::DMAController2, Platform::DmaStream::S7); }
