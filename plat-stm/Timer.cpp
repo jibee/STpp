@@ -262,6 +262,7 @@ Timer& Timer::clearInterrupt() {
 
 static Timer::Callback topCBs[15];
 void Timer::callTopCb(int nr) {
+    if(topCBs[nr])
 	topCBs[nr](nr);
 }
 

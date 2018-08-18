@@ -4,6 +4,7 @@
 #include <semphr.h>
 #include <task.h>
 #include <Irq.h>
+#include <stdlib.h>
 
 extern "C" {
     void DMA1_Stream0_IRQHandler();
