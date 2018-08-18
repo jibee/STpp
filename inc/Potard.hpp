@@ -3,7 +3,8 @@
 
 #include <AdcChannel.hpp>
 
-
+/** Potentiometer
+*/
 class Potard: public AdcChannel
 {
 public:

@@ -25,17 +25,18 @@
 #include <Gpio.h>
 
 /** Single pin ADC channel.
- * 
+ * @code{.cpp}
  * Gpio pin;
  * ADC adc;
  * AdcChannel channel = AdcChannel(adc, pin);
  * unsigned int measure = channel.rawMeasure();
+ * @endcode
  *
  * The STM32 line of MCU has a limited (2 or so) number of Analog/Digital
  * Converters. However, it is unlikely one would use them simulataneously at
  * their full rate. Therefore, to save device space (and cost) multiple pins
  * can be connected to a single ADC.
- * However obtaining an anaolg measure on a given pin requires setting up two
+ * However obtaining an analog measure on a given pin requires setting up two
  * devices to collaborate (ADC and GPIO) and retaining certain configuration
  * details for each conversion.
  *
